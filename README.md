@@ -1,7 +1,21 @@
-### Hi there 👋
+<h1>Hi, I'm Christian! <br/><a href="https://github.com/Caspinwall1">Security Operations Manager</a>, <a href="https://www.linkedin.com/in/christian-aspinwall-929292233/">Cybersecurity Professional</a>, </h1>
+
+<h2>👨‍💻 Cybersecurity and Networking Projects:</h2>
+
+- <b> Home Lab Projects</b>
+  - [Pi Hole Ad Blocker using a Rasberry Pi(in progress)](#Future project repository link#)
+-
+
+<h2> 🤳 Connect with me:</h2>
+
+[<img align="left" alt="ChristianAspinwall | LinkedIn" width="22px" src="https://www.linkedin.com/in/christian-aspinwall-929292233/" />][linkedin]
+
+
+
+[linkedin]: https://www.linkedin.com/in/christian-aspinwall-929292233/
 
 <!--
-**Caspinwall1/Caspinwall1** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+**Caspinwall1/jCaspinwall1** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
 Here are some ideas to get you started:
 
