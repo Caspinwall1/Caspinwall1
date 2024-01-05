@@ -8,7 +8,7 @@
 
 <h2> 🤳 Connect with me:</h2>
 
-[<img align="left" alt="ChristianAspinwall | LinkedIn" width="22px" src="https://www.linkedin.com/in/christian-aspinwall-929292233/" />][linkedin]
+[<"ChristianAspinwall | LinkedIn" width="22px" src="https://www.linkedin.com/in/christian-aspinwall-929292233/" />][linkedin]
 
 
 
