@@ -3,7 +3,7 @@
 <h2>👨‍💻 Cybersecurity and Networking Projects:</h2>
 
 - <b> Home Lab Projects</b>
-  - [Pi Hole Ad Blocker using a Rasberry Pi(in progress)](#Future project repository link#)
+  - [Pi Hole Ad Blocker using a Rasberry Pi(in progress)](https://github.com/Caspinwall1/PiHole/blob/main/README.md))
 -
 
 <h2> 🤳 Connect with me:</h2>
