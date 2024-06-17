@@ -1,4 +1,4 @@
-<h1>Hi, I'm Christian! <br/><a href="https://github.com/Caspinwall1">Military Officer</a> and <a href="https://www.linkedin.com/in/christian-aspinwall-929292233/">Cybersecurity Professional</a>, </h1>
+<h1>Hi, I'm Christian! <br/><a href="https://github.com/Caspinwall1">Military Officer</a> and <a href="https://www.linkedin.com/in/christian-aspinwall-929292233/">IT Professional</a>, </h1>
 
 <h2>👨‍💻 Cybersecurity and Networking Projects:</h2>
 
