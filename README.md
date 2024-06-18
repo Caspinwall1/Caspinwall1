@@ -55,11 +55,6 @@ University of Central Arkansas, May 2021
 
 ---
 
-## Why Convergint Technologies?
-
-I am excited about the opportunity to join Convergint Technologies as a Remote Support Specialist. Your company's values and beliefs, which emphasize a colleague-first culture and a commitment to diversity, align perfectly with my professional ethos. I am confident that my technical expertise, problem-solving abilities, and dedication to exceptional customer service will make me a valuable addition to your team.
-
-Let's connect and discuss how my background and skills can contribute to Convergint's mission of being the customer's best service provider.
 
 ---
 
