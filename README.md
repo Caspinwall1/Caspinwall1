@@ -5,6 +5,9 @@
 - <b> Home Lab Projects</b>
   - [Pi Hole Ad Blocker using a Rasberry Pi(in progress)](https://github.com/Caspinwall1/PiHole/blob/main/README.md))
   - [Disk Sanitization] https://github.com/Caspinwall1/Caspinwall1-DW/blob/main/README.md
+ 
+-<b> Python Projects</b>
+  -Restaurant Bill Calculator (insert link)
 -
 
 <h2> 🤳 Connect with me:</h2>
