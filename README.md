@@ -15,7 +15,7 @@
   - Distance Traveled
   - Triangle
 
--<b> Powershell Automation Scripts
+-<b> Powershell Automation Scripts</b>
  - Server Restart
 -
 
