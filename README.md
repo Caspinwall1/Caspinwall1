@@ -11,18 +11,39 @@
 -
 
 <h2> 🤳 Connect with me:</h2>
-## Experience
+### Systems Engineer | General Informatics (July 2024 - Present)
+Work across multiple IT environments
+Reset user passwords, assign permissions, create new users, use Active Directory to configure GPOs and user permissions.
+Use Windows Server and Microsoft Desktop OS to troubleshoot server issues that occur.
+Setup of new laptops/PCs and install/upgrade of standard software applications
+Provide Level 2 Help Desk Support
+Install new software releases, system upgrades, patches, etc.
+Create DHCP scope to propagate IP addresses to users. 
+Work directly with Sales to work on complex design for customer presentations
+Travel to customer sites
+Use screenconnect to remote into users computers and servers.
+Use the Connectwise ticketing system
+Perform event log analysis to identify the scope of the incident, alert, or problem.
+ Respond to compromised accounts, computers, and emails.
+Utilize Sentinel One to manage the security of endpoints and networks
+automating tasks within infrastructure to ensure a better customer experience
+Microsoft Active Directory, O365, and SharePoint
+Networking – Configuring/troubleshooting/deploying (SonicWall/Ruckus/Cisco/Unifi)
+Familiarity with Networking protocols (DHCP, DNS, VLANS)
+Windows Server 2012 and up and Windows 7 and up
+VMWare and Hyper-V
+Powershell scripting to troubleshoot and gain system information 
 
-### Simulation Technician at Actalent (March 2024 – Present)
+### Simulation Technician at Actalent (March 2024 – June 2024)
 - Utilized Linux for daily data access and troubleshooting simulations and training aids.
 - Assisted a team of 13 in configuring and troubleshooting a VOIP server.
 
-### Security Operations Manager | Infantry Officer at US Army (Sep 2022 – Present)
+### Security Operations Manager | Infantry Officer at US Army (Sep 2022 – February 2024)
 - Monitored network security and ensured adherence to information security policies.
 - Troubleshot Cisco routers and switches to maintain uninterrupted internet access for 5 endpoints.
 - Developed a tracking system using Excel and Microsoft Teams to improve resource allocation, saving 267 hours of labor.
 
-### Manager at Waffle House (Jan 2022 – Dec 2022)
+### Manager at Waffle House (Sep 2021 – Sep 2022)
 - Directed high-volume operations, ensuring exceptional service and operational efficiency.
 - Increased monthly revenue by $13,500 through strategic cost control and profitability enhancement.
 - Maintained high customer satisfaction by resolving 150 customer concerns promptly.
