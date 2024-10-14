@@ -7,7 +7,6 @@
   - [Disk Sanitization] https://github.com/Caspinwall1/Caspinwall1-DW/blob/main/README.md
  
 -<b> Python Projects</b>
- 
   -Restaurant Bill Calculator (insert link)
   -Bagels a deductive logic game ([link](https://github.com/Caspinwall1/Caspinwall1/commit/9cb21027a2d827f484e17a55afc9b4ab70c362d1))
   -Circles
