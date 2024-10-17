@@ -41,7 +41,7 @@ class Character:
 
 class Player(Character):
     def __init__(self, name):
-        super().__init__(name, health=100, attack=20, defense=10)
+        super().__init__(name, health=50, attack=5, defense=5)
         self.level = 1
         self.experience = 0
         self.inventory = []
@@ -143,7 +143,7 @@ def path():
     #I am thinking about camping here
 def encounter_dragon():
     print("\nYou encounter a sleeping dragon!")
-    dragon = Monster(name="Dragon", health=80, attack=15, defense=5, xp_reward=50)
+    dragon = Monster(name="Dragon", health=500, attack=15, defense=5, xp_reward=50)
     combat(player, dragon)
     if player.is_alive():
         print("With the dragon defeated, you find the exit. You win!")
@@ -178,7 +178,7 @@ def room2_continued():
     choice = input("> ")
 
     if choice.lower() == "fight":
-        troll = Monster(name="Troll", health=60, attack=10, defense=3, xp_reward=30)
+        troll = Monster(name="Troll", health=100, attack=15, defense=3, xp_reward=30)
         combat(player, troll)
         if player.is_alive():
             print("You defeated the troll and cross the bridge to find the exit. You win!")
@@ -244,7 +244,7 @@ def combat(player, monster):
         print(f"\nYou have been defeated by the {monster.name}.")
 
 def end_game():
-    print("\nThank you for playing the Adventure Game with Stats!")
+    print("\nThank you for playing The Adventure Game!")
     sys.exit()
 
 if __name__ == "__main__":
