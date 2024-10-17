@@ -14,6 +14,7 @@
   - Rectangles
   - Distance Traveled
   - Triangle
+  - Adventure Game
 
 -<b> Powershell Automation Scripts</b>
  - Server Restart
