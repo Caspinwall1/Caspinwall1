@@ -1,0 +1,251 @@
+"""
+Created on Wed Oct 16 19:28:49 2024
+
+@author: Christian Aspinwall
+"""
+
+import sys
+import random
+
+class Character:
+    def __init__(self, name, health, attack, defense):
+        self.name = name
+        self.max_health = health
+        self.health = health
+        self.attack = attack
+        self.defense = defense
+
+    def is_alive(self):
+        return self.health > 0
+
+    def take_damage(self, damage):
+        actual_damage = max(damage - self.defense, 0)
+        self.health -= actual_damage
+        print(f"{self.name} takes {actual_damage} damage! (HP: {self.health}/{self.max_health})")
+        if not self.is_alive():
+            print(f"{self.name} has been defeated!")
+
+    def attack_target(self, target):
+        print(f"{self.name} attacks {target.name}!")
+        target.take_damage(self.attack)
+    
+    def heal(self, amount):
+        self.health += amount
+        if self.health > self.max_health:
+            self.health = self.max_health
+        print(f"{self.name} heals for {amount} points. (HP: {self.health}/{self.max_health})")
+
+    def full_heal(self):
+        self.health = self.max_health
+        print(f"{self.name} has been fully healed. (HP: {self.health}/{self.max_health})")
+
+class Player(Character):
+    def __init__(self, name):
+        super().__init__(name, health=100, attack=20, defense=10)
+        self.level = 1
+        self.experience = 0
+        self.inventory = []
+
+    def gain_experience(self, xp):
+        self.experience += xp
+        print(f"{self.name} gains {xp} XP! (Total XP: {self.experience})")
+        self.check_level_up()
+
+    def check_level_up(self):
+        xp_for_next_level = self.level * 100
+        if self.experience >= xp_for_next_level:
+            self.level += 1
+            self.experience -= xp_for_next_level
+            self.max_health += 20
+            self.health = self.max_health
+            self.attack += 5
+            self.defense += 2
+            print(f"Congratulations! {self.name} has reached Level {self.level}!")
+            print(f"Stats increased: HP={self.max_health}, Attack={self.attack}, Defense={self.defense}")
+            
+
+
+class Monster(Character):
+    def __init__(self, name, health, attack, defense, xp_reward):
+        super().__init__(name, health, attack, defense)
+        self.xp_reward = xp_reward
+
+# Initialize the player
+player = Player(name="Hero")
+
+def intro():
+    print("Welcome to the Adventure Game with Stats!")
+    print(f"Character: {player.name}")
+    print(f"HP: {player.health}/{player.max_health}, Attack: {player.attack}, Defense: {player.defense}")
+    print("\nYou find yourself in a dark dungeon with two doors.")
+    print("Do you choose to go through Door 1 or Door 2?")
+    choice = input("> ")
+
+    if choice == "1":
+        room1()
+    elif choice == "2":
+        room2()
+    else:
+        print("Invalid choice. Please choose 1 or 2.")
+        intro()
+
+def room1():
+    print("\nYou enter Room 1. It's a dimly lit room with a table in the center.")
+    print("On the table, there is a key and a mysterious potion.")
+    print("Do you take the key or the potion?")
+    choice = input("> ")
+
+    if choice.lower() == "key":
+        print("\nYou take the key. It might be useful later.")
+        player.inventory.append("key")
+        room1_continued()
+    elif choice.lower() == "potion":
+        print("\nYou drink the potion and feel a surge of energy.")
+        player.health = min(player.max_health, player.health + 20)
+        print(f"Your health is now {player.health}/{player.max_health}.")
+        room1_continued()
+    else:
+        print("Invalid choice. Please type 'key' or 'potion'.")
+        room1()
+
+def room1_continued():
+    print("\nAfter your decision, you see two paths ahead.")
+    print("Do you go left or right?")
+    choice = input("> ")
+
+    if choice.lower() == "left":
+        if "key" in player.inventory:
+            print("\nYou use the key to unlock a hidden door and find the exit. You exit and come to a path.")
+            bandit_encounter()
+        else:
+            print("\nThe door is locked. You need a key to open it.")
+            room1_continued()
+    elif choice.lower() == "right":
+        encounter_dragon()
+    else:
+        print("Invalid choice. Please type 'left' or 'right'.")
+        room1_continued()
+def bandit_encounter():
+    print("\nOn that path you encounter a bandit.")
+    bandit = Monster(name = "bandit", health=25, attack=5, defense=5, xp_reward=10)
+    combat(player, bandit)
+    if player.is_alive():
+        print("You killed the bandit!")
+        path()
+    else:
+        print("The bandit slit your throat and scalped you!")
+        end_game()
+        
+def path():
+    print("After defeating the bandit you continue along the path.")
+    print("To be continued.")
+    end_game()
+    #I am thinking about camping here
+def encounter_dragon():
+    print("\nYou encounter a sleeping dragon!")
+    dragon = Monster(name="Dragon", health=80, attack=15, defense=5, xp_reward=50)
+    combat(player, dragon)
+    if player.is_alive():
+        print("With the dragon defeated, you find the exit. You win!")
+        end_game()
+    else:
+        print("You were slain by the dragon. Game Over.")
+        end_game()
+
+def room2():
+    print("\nYou enter Room 2. It's a large hall with two statues.")
+    print("One statue holds a sword, and the other holds a shield.")
+    print("Do you take the sword or the shield?")
+    choice = input("> ")
+
+    if choice.lower() == "sword":
+        print("\nYou take the sword. It feels powerful in your hand.")
+        player.attack += 5
+        print(f"Your attack is now {player.attack}.")
+        room2_continued()
+    elif choice.lower() == "shield":
+        print("\nYou take the shield. It might protect you later.")
+        player.defense += 3
+        print(f"Your defense is now {player.defense}.")
+        room2_continued()
+    else:
+        print("Invalid choice. Please type 'sword' or 'shield'.")
+        room2()
+
+def room2_continued():
+    print("\nAfter your decision, you come across a troll guarding a bridge.")
+    print("Do you choose to fight or sneak?")
+    choice = input("> ")
+
+    if choice.lower() == "fight":
+        troll = Monster(name="Troll", health=60, attack=10, defense=3, xp_reward=30)
+        combat(player, troll)
+        if player.is_alive():
+            print("You defeated the troll and cross the bridge to find the exit. You win!")
+            end_game()
+        else:
+            print("The troll overpowered you. You lose!")
+            end_game()
+    elif choice.lower() == "sneak":
+        if player.attack > 15 or player.defense > 12:
+            print("\nUsing your skills, you successfully sneak past the troll and find the exit. You win!")
+            end_game()
+        else:
+            print("\nYou stumble while sneaking, and the troll catches you.")
+            print("You lose!")
+            end_game()
+    else:
+        print("Invalid choice. Please type 'fight' or 'sneak'.")
+        room2_continued()
+
+def combat(player, monster):
+    print(f"\nA wild {monster.name} appears!")
+    print(f"{monster.name} Stats - HP: {monster.health}, Attack: {monster.attack}, Defense: {monster.defense}\n")
+
+    while player.is_alive() and monster.is_alive():
+        print(f"{player.name} - HP: {player.health}/{player.max_health}")
+        print(f"{monster.name} - HP: {monster.health}/{monster.max_health}")
+        print("\nChoose an action: [attack, defend, use item, flee]")
+        action = input("> ")
+
+        if action.lower() == "attack":
+            player.attack_target(monster)
+            if monster.is_alive():
+                monster.attack_target(player)
+        elif action.lower() == "defend":
+            print(f"{player.name} defends and reduces incoming damage!")
+            original_defense = player.defense
+            player.defense += 5
+            monster.attack_target(player)
+            player.defense = original_defense
+        elif action.lower() == "use item":
+            if "potion" in player.inventory:
+                print("You use a potion and restore 30 HP.")
+                player.health = min(player.max_health, player.health + 30)
+                player.inventory.remove("potion")
+                print(f"Your health is now {player.health}/{player.max_health}.")
+            else:
+                print("You have no items to use.")
+        elif action.lower() == "flee":
+            if random.random() < 0.5:
+                print("You successfully fled from combat!")
+                # Implement fleeing logic, e.g., return to previous room
+                return
+            else:
+                print("Failed to flee!")
+                monster.attack_target(player)
+        else:
+            print("Invalid action. Choose [attack, defend, use item, flee].")
+
+    if player.is_alive():
+        print(f"\nYou have defeated the {monster.name}!")
+        player.gain_experience(monster.xp_reward)
+    else:
+        print(f"\nYou have been defeated by the {monster.name}.")
+
+def end_game():
+    print("\nThank you for playing the Adventure Game with Stats!")
+    sys.exit()
+
+if __name__ == "__main__":
+    intro()
