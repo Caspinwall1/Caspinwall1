@@ -8,12 +8,13 @@ import sys
 import random
 
 class Character:
-    def __init__(self, name, health, attack, defense):
+    def __init__(self, name, health, attack, defense, mana):
         self.name = name
         self.max_health = health
         self.health = health
         self.attack = attack
         self.defense = defense
+        self.mana = mana
 
     def is_alive(self):
         return self.health > 0
@@ -41,10 +42,12 @@ class Character:
 
 class Player(Character):
     def __init__(self, name):
-        super().__init__(name, health=50, attack=5, defense=5)
+        super().__init__(name, health=50, attack=5, defense=5, mana = 10)
         self.level = 1
         self.experience = 0
         self.inventory = []
+        self.spells = []
+        self.bandit_killed = False
 
     def gain_experience(self, xp):
         self.experience += xp
@@ -52,17 +55,25 @@ class Player(Character):
         self.check_level_up()
 
     def check_level_up(self):
-        xp_for_next_level = self.level * 100
+        # Calculate experience needed for the next level (increase by 50% each level)
+        xp_for_next_level = int(10 * (1.5 ** (self.level - 1)))
+        
         if self.experience >= xp_for_next_level:
+            # Level up the player
             self.level += 1
             self.experience -= xp_for_next_level
-            self.max_health += 20
+            self.max_health += 10
             self.health = self.max_health
-            self.attack += 5
-            self.defense += 2
+            self.attack += 3
+            self.defense += 3
+            self.mana += 10
             print(f"Congratulations! {self.name} has reached Level {self.level}!")
             print(f"Stats increased: HP={self.max_health}, Attack={self.attack}, Defense={self.defense}")
+            print(f"Next level XP required: {xp_for_next_level * 1.5}")
             
+
+    
+
 
 
 class Monster(Character):
@@ -88,6 +99,48 @@ def intro():
     else:
         print("Invalid choice. Please choose 1 or 2.")
         intro()
+        
+def firebolt(player, target):
+    mana_cost = 50
+    if player.mana >= mana_cost:
+        player.mana -= mana_cost
+        damage = player.attack * 1.5  # Firebolt deals 1.5x player's attack
+        print(f"{player.name} casts Firebolt! It deals {damage} damage.")
+        target.health -= damage
+    else:
+        print("Not enough mana to cast Firebolt!")
+        
+def camp(next_room):
+    print("\nYou decide to set up camp and rest for the night...")
+    print("You are fully healed after a night's rest.")
+    player.full_heal()
+    player.mana = player.max_mana
+
+    # Check if the bandit was killed, and roll for a 25% chance of revenge
+    if player.bandit_killed:
+        if random.random() < 0.25:  # 25% chance
+            print("\nYour rest is interrupted by the Revenge of the Bandit!")
+            revenge_of_the_bandit(next_room)
+        else:
+            print("You rest peacefully through the night.")
+    else:
+        print("You rest peacefully through the night.")
+        next_room()
+
+def revenge_of_the_bandit(next_room):
+    print("\nThe bandit you killed earlier had friends and they came for revenge!")
+    revenge_bandit = Monster(name="Revengeful Bandits", health=250, attack=30, defense=20, xp_reward=75)
+    combat(player, revenge_bandit, None)
+    
+    if player.is_alive():
+        print("You defeated the revengeful bandits.")
+        print("You can make use of one of their helmets and chainmail.")
+        player.defense += 10
+        next_room()
+
+    else:
+        print("The revengeful bandit got the better of you this time.")
+        end_game()
 
 def room1():
     print("\nYou enter Room 1. It's a dimly lit room with a table in the center.")
@@ -100,9 +153,8 @@ def room1():
         player.inventory.append("key")
         room1_continued()
     elif choice.lower() == "potion":
-        print("\nYou drink the potion and feel a surge of energy.")
-        player.health = min(player.max_health, player.health + 20)
-        print(f"Your health is now {player.health}/{player.max_health}.")
+        print("\nYou take the potion and store it in your inventory for later.")
+        player.inventory.append("potion")
         room1_continued()
     else:
         print("Invalid choice. Please type 'key' or 'potion'.")
@@ -127,10 +179,13 @@ def room1_continued():
         room1_continued()
 def bandit_encounter():
     print("\nOn that path you encounter a bandit.")
-    bandit = Monster(name = "bandit", health=25, attack=5, defense=5, xp_reward=10)
-    combat(player, bandit)
+    bandit = Monster(name = "bandit", health=25, attack=8, defense=3, xp_reward=15)
+    combat(player, bandit, room1_continued)
     if player.is_alive():
         print("You killed the bandit!")
+        print("\nYou take the bandit's sword. It feels powerful in your hand.")
+        player.attack += 5
+        player.bandit_killed = True
         path()
     else:
         print("The bandit slit your throat and scalped you!")
@@ -138,20 +193,287 @@ def bandit_encounter():
         
 def path():
     print("After defeating the bandit you continue along the path.")
-    print("To be continued.")
-    end_game()
-    #I am thinking about camping here
+    print("You come up to a bridge. Do you continue on to the bridge or do you go around?")
+    choice = input("> ")
+
+    if choice.lower() == "bridge":
+        bridge()
+    elif choice.lower() == "around":
+        river()
+    else:
+        print("Invalid choice. Please choose bridge or around.")
+        path()
+def bridge():
+    print("You walk up the bridge. It is quite nice here.")
+    print("As you walk further a troll stands in your way")
+    troll = Monster(name="Troll", health=100, attack=15, defense=5, xp_reward=25)
+    combat(player, troll, path)
+    if player.is_alive():
+            print("You defeated the troll and cross the bridge.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+    
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+            if choice.lower() == "camp":
+                camp(next_room=crossroads)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                crossroads()  # After camping, ask the player to choose the bridge or around
+
+            elif choice.lower() == "continue":
+                crossroads()
+
+            else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+                camp(next_room=crossroads)  # Recursively call the function if input is invalid
+                crossroads()
+    else:
+            print("The troll overpowered you. You lose!")
+            end_game()
+
+def river():
+    print("You decide to brave the river.")
+    print("The river is challenging to swim across but, you can manage.")
+    print("As you swim you see two reptilian eyes staring at you!")
+    Alligator = Monster(name="alligator", health=50, attack=25, defense=5, xp_reward=30)
+    combat(player, Alligator, path)
+    if player.is_alive():
+            print("You wrestle with the alligator and kill it with your sword.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+    
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+            if choice.lower() == "camp":
+                camp(next_room=crossroads)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                crossroads()  # After camping, ask the player to choose the bridge or around
+
+            elif choice.lower() == "continue":
+                crossroads()
+
+            else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+                camp(next_room=crossroads)  # Recursively call the function if input is invalid
+                crossroads()
+    else:
+            print("The alligator eats you whole!")
+            end_game()
+            
+def crossroads():
+    print("You come to an alter and on that alter is a message.")
+    print("You have done well coming this far you can either continue on this path or I can send you back to the dungeon?")
+    choice = input("> ")
+
+    if choice.lower() == "continue":
+        path_continued()
+    elif choice.lower() == "dungeon":
+        intro()
+    else:
+        print("Invalid choice. Please choose continue or dungeon.")
+        crossroads()
+        
+def path_continued():
+    print("You continue along the path.")
+    print("A pack of wolves ambush you!")
+    Pack_of_wolves = Monster(name="pack of wolves", health=200, attack=30, defense=10, xp_reward=50)
+    combat(player, Pack_of_wolves)
+    if player.is_alive():
+            print("You vanquish the wolves one by one.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+    
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+            if choice.lower() == "camp":
+                camp(next_room=forrest_path)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                forrest_path()  # After camping, ask the player to choose the bridge or around
+
+            elif choice.lower() == "continue":
+                forrest_path()
+
+            else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+                camp(next_room=forrest_path)  # Recursively call the function if input is invalid
+                forrest_path()
+    else:
+            print("The wolfpack eats you alive!")
+            end_game()
+    
+def forrest_path():
+    print("As you walk further into the woods you spot a bandit camp.")
+    print("Do you continue on the path or do you enter the camp?")
+    choice = input("> ")
+
+    if choice.lower() == "continue":
+        forrest_path_continued()
+    elif choice.lower() == "camp":
+        bandit_camp_gate()
+    else:
+        print("Invalid choice. Please choose continue or camp.")
+        forrest_path()
+    
+def forrest_path_continued():
+    print("You continue down the path")
+    print("in the middle of the path you see a huge wolf and several smaller ones")
+    print("Do you attack the Alpha and the rest of his pack or do you go back?")
+    choice = input("> ")
+
+    if choice.lower() == "attack":
+       Alpha_with_wolfpack = Monster(name = "Alpha and his pack", health=500, attack=100, defense=10, xp_reward=100)
+       combat(player,  Alpha_with_wolfpack, forrest_path_continued)
+       if player.is_alive():
+           print("You finally put an end to the alpha and his pack!")
+           print("This path is to be continued")
+           end_game()
+       else:
+           print("The pack eats you alive!")
+           end_game()
+    elif choice.lower() == "back":
+        forrest_path()
+    else:
+        print("Invalid choice. Please choose continue or camp.")
+        forrest_path_continued()
+        
+def bandit_camp_gate():
+    print("You come up to the gate and you see two bandits guarding the gates.")
+    print("Do you attack the bandits or go back?")
+    choice = input("> ")
+
+    if choice.lower() == "attack":
+       Bandit_gate_guards = Monster(name = "Bandit Gate Guards", health=100, attack=20, defense=20, xp_reward=50)
+       combat(player,  Bandit_gate_guards, forrest_path)
+       if player.is_alive():
+           print("You kill the guards.")
+           bandit_camp_lower()
+       else:
+           print("The guards decapitate you and put your head on a spike!")
+           end_game()
+    elif choice.lower() == "back":
+        forrest_path()
+    
+def bandit_camp_lower():
+    print("You open the gates and bandits start charging at you while others shoot arrows in your direction!")
+    Bandit_squad = Monster(name = "Bandit Squad", health=500, attack=75, defense=20, xp_reward=100)
+    combat(player,  Bandit_squad, bandit_camp_gate)
+    if player.is_alive():
+           print("You kill the bandits.")
+           print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+    
+           choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+           if choice.lower() == "camp":
+                camp(next_room=bandit_camp_lower_incline)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                bandit_camp_lower_incline()  # After camping, ask the player to choose the bridge or around
+
+           elif choice.lower() == "continue":
+                bandit_camp_lower_incline()
+
+           else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+                camp(next_room=bandit_camp_lower_incline)  # Recursively call the function if input is invalid
+                bandit_camp_lower_incline()
+    else:
+           print("The bandits decapitate you and put your head on a spike!")
+           end_game()
+           
+def bandit_camp_lower_incline():
+    print("You race up the dirt path that leads to another gate")
+    print("These look like tough gate guards. With arrows flying towards you attack the gate guards")
+    Elite_Bandit_gate_guards = Monster(name = " Elite Bandit Gate Guards", health=250, attack=50, defense=40, xp_reward=100)
+    combat(player,  Elite_Bandit_gate_guards, bandit_camp_gate)
+    if player.is_alive():
+           print("You kill the guards.")
+           bandit_camp_upper()
+    else:
+           print("The guards decapitate you and put your head on a spike!")
+           end_game()
+           
+def bandit_camp_upper():
+    print("As you open the door you see an even larger tougher group of bandits charging at you!")
+    Elite_Bandit_squad = Monster(name = "Elite Bandit Group", health=1000, attack=150, defense=100, xp_reward=200)
+    combat(player,  Elite_Bandit_squad, bandit_camp_gate)
+    if player.is_alive():
+           print("You kill the bandits.")
+           print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+    
+           choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+           if choice.lower() == "camp":
+                camp(next_room=Bandit_Kings_Hall)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                Bandit_Kings_Hall()  # After camping, ask the player to choose the bridge or around
+
+           elif choice.lower() == "continue":
+                Bandit_Kings_Hall()
+
+           else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+                camp(next_room=Bandit_Kings_Hall)  # Recursively call the function if input is invalid
+                Bandit_Kings_Hall()
+    else:
+           print("The bandits decapitate you and put your head on a spike!")
+           end_game()
+           
+def Bandit_Kings_Hall():
+    print("You bust open the doors and you see the Bandit King with bodyguards with crossbows pointed at you.")
+    print("You got some guts ill give you that. But, your death is already here. I will make your death a painful one and put your head on a spike!")
+    Bandit_King = Monster(name = " Bandit King and his men", health=5000, attack=500, defense=500, xp_reward=1000)
+    combat(player,  Bandit_King, bandit_camp_gate)
+    if player.is_alive():
+           print("You killed the bandit king himself and take his battleaxe.")
+           player.attack += 50
+           print("You saved the princess.")
+           print("You can end the game in another victory or you can continue on the forrest path")
+           choice = input("> ")
+           if choice == "end":
+               end_game()
+           elif choice == "continue":
+               forrest_path()
+           else:
+               print("Please enter end or continue")
+            
+           
+    else:
+           print("The bandit kick slices your open and rips your rib cage out!")
+           print("The king decapitate you and put your head on a spike!")
+           end_game()
+    
+  
 def encounter_dragon():
     print("\nYou encounter a sleeping dragon!")
-    dragon = Monster(name="Dragon", health=500, attack=15, defense=5, xp_reward=50)
-    combat(player, dragon)
+    baby_dragon = Monster(name="Baby Dragon", health=500, attack=40, defense=20, xp_reward=100)
+    combat(player, baby_dragon, room1_continued)
     if player.is_alive():
-        print("With the dragon defeated, you find the exit. You win!")
-        end_game()
+        print("With the dragon defeated, you feel the need to rest.")
+        print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+    
+        choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+        if choice.lower() == "camp":
+                camp(next_room=crumbling_room)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                crumbling_room()  # After camping, ask the player to choose the bridge or around
+
+        elif choice.lower() == "continue":
+                crumbling_room()
+
+        else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+                camp(next_room=crumbling_room)  # Recursively call the function if input is invalid
+                crumbling_room()
     else:
         print("You were slain by the dragon. Game Over.")
         end_game()
+def crumbling_room():
+    print("As you come to you realize that the room is crumbling quickly")
+    print("Out of the corner of your eye you see a metal barrel with a lid.")
+    print("Do you get in the barrel or jump?")
+    choice = input("> ")
 
+    if choice == "barrel":
+        print("You get out of the barrel and can barely see it is so dark in here!")
+        dark_hallway()
+    elif choice.lower() == "jump":
+        print("You jump and end up being crushed by falling rocks.")
+        end_game()
+    else:
+          print("Invalid choice. Please choose barrel or jump.")
+          room2_choices()
+    
 def room2():
     print("\nYou enter Room 2. It's a large hall with two statues.")
     print("One statue holds a sword, and the other holds a shield.")
@@ -165,7 +487,7 @@ def room2():
         room2_continued()
     elif choice.lower() == "shield":
         print("\nYou take the shield. It might protect you later.")
-        player.defense += 3
+        player.defense += 5
         print(f"Your defense is now {player.defense}.")
         room2_continued()
     else:
@@ -173,39 +495,290 @@ def room2():
         room2()
 
 def room2_continued():
-    print("\nAfter your decision, you come across a troll guarding a bridge.")
-    print("Do you choose to fight or sneak?")
+    print("\nAfter your decision, a feral rat attacks you.")
+    feral_rat = Monster(name="Feral Rat", health=15, attack=10, defense=3, xp_reward=10)
+    combat(player, feral_rat, intro)
+    if player.is_alive():
+            print("You defeated the Rat.")
+            room2_choices()
+    else:
+            print("The rat overpowered you. You lose!")
+            end_game()
+def room2_choices():
+    print("\n After defeating the rat you see the door that leads to room 1 or an open door that leads to a hallway")
+    print("Do you open door 1 or walk into the hallway?")
     choice = input("> ")
 
-    if choice.lower() == "fight":
-        troll = Monster(name="Troll", health=100, attack=15, defense=3, xp_reward=30)
-        combat(player, troll)
+    if choice == "1":
+        room1()
+    elif choice.lower() == "hallway":
+        Hallway()
+    else:
+          print("Invalid choice. Please choose 1 or hallway.")
+          room2_choices()
+    
+def Hallway():
+    print("\nYou enter the warmly lit hallway.")
+    print("You see a torch on the wall, and a necklace on the ground.")
+    print("\nDo you take the torch or the necklace?")
+    choice = input("> ")
+
+    if choice.lower() == "torch":
+        print("\nYou take the torch. You feel like you will need this later.")
+        player.inventory.append("torch")
+        hallway_continued()
+    elif choice.lower() == "necklace":
+        print("\nYou take the necklace. You feel more tough.")
+        player.max_health += 10
+        print(f"Your health is now {player.health}.")
+        hallway_continued()
+    else:
+        print("Invalid choice. Please type 'torch' or 'necklace'.")
+        room2()
+def hallway_continued():
+    print("Do you go forward or backward")
+    choice = input("> ")
+
+    if choice.lower() == "forward":
+        hallway_forward()
+    elif choice.lower() == "backward":
+        dark_hallway()
+    else:
+        print("Invalid choice. Please choose forward or backward.")
+        hallway_continued()
+
+def hallway_forward():
+    print("\nA skeleton comes charging at you!")
+    skeleton = Monster(name = "skeleton", health=30, attack=15, defense=7, xp_reward=15)
+    combat(player, skeleton, hallway_continued)
+    if player.is_alive():
+        print("You killed the skeleton!")
+        hallway_choices()
+    else:
+        print("The skeleton cut your heart out! You look at the ceiling as blood pools around you and your vision fades to black.")
+        end_game()
+
+def dark_hallway():
+    print("\nYou enter a pitch-black room. You can't see anything.")
+    
+    if "torch" in player.inventory:
+        print("Luckily, you have the torch! You light it and can see the room clearly.")
+        print("There are two exits from this room.")
+        # Continue with the game logic, like choosing an exit, finding an item, etc.
+        dark_room_continued()
+    else:
+        print("Without a torch, it's too dangerous to proceed. You have to turn back.")
+        Hallway()
+
+def dark_room_continued():
+    print("\nYou see two doors ahead, one leading to safety, the other to danger.")
+    print("Which door do you choose? Left or right?")
+    choice = input("> ")
+
+    if choice.lower() == "left":
+        print("You find the exit and escape the dungeon! You exit the dungeon and come to a path.")
+        bandit_encounter()
+    elif choice.lower() == "right":
+        print("You encounter a dangerous monster and have to fight!")
+        monster = Monster(name="Dark Monster", health=100, attack=20, defense=10, xp_reward=40)
+        combat(player, monster, hallway_continued)
         if player.is_alive():
-            print("You defeated the troll and cross the bridge to find the exit. You win!")
+            print("You defeated the monster and see a staircase!")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+        
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+        
+            if choice.lower() == "camp":
+                    camp(next_room= bottom_of_staircase)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    bottom_of_staircase()  # After camping, ask the player to choose the bridge or around
+
+            elif choice.lower() == "continue":
+                    bottom_of_staircase()
+
+            else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+                    camp(next_room= bottom_of_staircase)  # Recursively call the function if input is invalid
+                    bottom_of_staircase()
+            print("You go down the staircase.")
+            bottom_of_staircase()
+        else:
+            print("You were defeated by the monster in the darkness.")
+            end_game()
+    else:
+        print("Invalid choice. Please type 'left' or 'right'.")
+        dark_room_continued()
+        
+def bottom_of_staircase():
+     print("After going down the steps you come to an alter that is in front of a huge door.")
+     print("On the alter is a message that reads, I can send you back to the beginning or you can brave what is behind this door")
+     print("Do you go through the door or go back to where you started.")
+     choice = input("> ")
+
+     if choice.lower() == "continue":
+         huge_door()
+     elif choice.lower() == "back":
+         intro()
+     else:
+         print("Invalid choice. Please choose continue or back.")
+         bottom_of_staircase()
+        
+def huge_door():
+    print("You grunt as you open the huge door")
+    print("Your heart pounds as you are met with a massive green dragon looking right at you!")
+    Green_dragon = Monster(name = "Green Dragon", health=2000, attack=100, defense=200, xp_reward=500)
+    combat(player, Green_dragon, bottom_of_staircase)
+    if player.is_alive():
+        print("You killed the Dragon and beat the dungeon!")
+        print("You absorbed some of the ancient knowledge from the dragon!")
+        print("It grants you the spell Firebolt.")
+        player["spells"].append(firebolt)
+        print("You can end the game and be transported outside of the dungeon?")
+        choice = input("> ")
+        if choice.lower() == "outside":
+            path()
+        elif choice.lower() == "end":
             end_game()
         else:
-            print("The troll overpowered you. You lose!")
+            print("Invalid choice. Please choose outside or end.")
+            hallway_choices()
+    else:
+        print("The dragon exhales fire as you turn to ash.")
+        end_game()
+    
+        
+def hallway_choices():
+    print("After vanquishing the skeleton you come across a set of stairs and a door.")
+    print("Do you take the stairs or the door")
+    choice = input("> ")
+
+    if choice.lower() == "stairs":
+        stairs()
+    elif choice.lower() == "door":
+        room3()
+    else:
+        print("Invalid choice. Please choose forward or backward.")
+        hallway_choices()
+        
+def stairs():
+    print("You go up the stairs and a skeleton archer starts shooting arrows at you!!")
+    Skeleton_Archer = Monster(name="Skeleton Archer", health=35, attack=30, defense=5, xp_reward=20)
+    combat(player, Skeleton_Archer,  hallway_choices)
+    if player.is_alive():
+            print("You killed the skeleton archer and continue on the path")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+        
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+        
+            if choice.lower() == "camp":
+                    camp(next_room=hallway2)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    hallway2()  # After camping, ask the player to choose the bridge or around
+
+            elif choice.lower() == "continue":
+                    hallway2()
+
+            else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+                    camp(next_room=hallway2)  # Recursively call the function if input is invalid
+                    hallway2()
+    else:
+            print("You were defeated by the skeleton.")
+            end_game()
+
+def room3():
+    print("You enter the room and notice there are a lot of cobwebs in this room")
+    print("Out of nowhere a spider comes and attacks you!")
+    Venomous_Spider = Monster(name="Venomous Spider", health=50, attack=30, defense=5, xp_reward=22)
+    combat(player, Venomous_Spider,  hallway_choices)
+    if player.is_alive():
+            print("You killed the Spider and you coat your weapon in its venom")
+            print("This room is a deadend you turn back")
+            player.attack += 5
+            stairs()
+    else:
+            print("You were defeated by the monster in the darkness.")
+            end_game()
+
+def hallway2():
+    print("As you take the last step you notice an eerily lit hallway")
+    print("You see a pair of boots on one pedestal and a potion on the other which do you take?")
+    choice = input("> ")
+
+    if choice.lower() == "boots":
+        print("\nYou take the boots. The boots make you feel more protected.")
+        player.defense += 5
+        hallway2_continued()
+    elif choice.lower() == "potion":
+        print("\nYou take the potion. You will need it later.")
+        player.inventory.append("potion")
+        hallway2_continued()
+    else:
+        print("Invalid choice. Please type 'boots' or 'potion'.")
+        hallway2()
+
+def hallway2_continued():
+    print("Walking through the hallway you are see a wooden golem guarding a stone door.")
+    print(" Do you fight the golem or sneak past him")
+    choice = input("> ")
+    if choice.lower() == "fight":
+        Wooden_Golem = Monster(name="Wooden Golem", health=200, attack=30, defense=50, xp_reward=50)
+        combat(player,  Wooden_Golem, hallway2_continued)
+        if player.is_alive():
+            print("You defeated the golem and open the door")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+        
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+        
+            if choice.lower() == "camp":
+                    camp(next_room= encounter_dragon)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    encounter_dragon()  # After camping, ask the player to choose the bridge or around
+
+            elif choice.lower() == "continue":
+                    encounter_dragon()
+
+            else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+                    camp(next_room=encounter_dragon)  # Recursively call the function if input is invalid
+                    encounter_dragon()
+        else:
+            print("The golem crushes you. You lose!")
             end_game()
     elif choice.lower() == "sneak":
         if player.attack > 15 or player.defense > 12:
-            print("\nUsing your skills, you successfully sneak past the troll and find the exit. You win!")
-            end_game()
+            print("\nUsing your skills, you successfully sneak past the troll and open the door quitely.")
+            encounter_dragon()
         else:
-            print("\nYou stumble while sneaking, and the troll catches you.")
-            print("You lose!")
-            end_game()
-    else:
-        print("Invalid choice. Please type 'fight' or 'sneak'.")
-        room2_continued()
+            print("\nYou stumble while sneaking, and the golem catches you.")
+            Wooden_Golem = Monster(name="Wooden Golem", health=200, attack=30, defense=50, xp_reward=50)
+            combat(player,  Wooden_Golem, hallway2_continued)
+            if player.is_alive():
+               print("You defeated the golem and open the door")
+               print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+        
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+        
+            if choice.lower() == "camp":
+                    camp(next_room= encounter_dragon)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    encounter_dragon()  # After camping, ask the player to choose the bridge or around
 
-def combat(player, monster):
+            elif choice.lower() == "continue":
+                    encounter_dragon()
+
+            else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+                    camp(next_room=encounter_dragon)  # Recursively call the function if input is invalid
+                    encounter_dragon()
+    else:
+        print("Please choose either fight or sneak.")
+    
+
+def combat(player, monster, previous_room):
     print(f"\nA wild {monster.name} appears!")
     print(f"{monster.name} Stats - HP: {monster.health}, Attack: {monster.attack}, Defense: {monster.defense}\n")
 
     while player.is_alive() and monster.is_alive():
         print(f"{player.name} - HP: {player.health}/{player.max_health}")
         print(f"{monster.name} - HP: {monster.health}/{monster.max_health}")
-        print("\nChoose an action: [attack, defend, use item, flee]")
+        print("\nChoose an action: [attack, defend, cast spell use item, flee]")
         action = input("> ")
 
         if action.lower() == "attack":
@@ -218,18 +791,27 @@ def combat(player, monster):
             player.defense += 5
             monster.attack_target(player)
             player.defense = original_defense
+        elif action.lower() == "cast spell":
+            if "firebolt" in player.spells:  # Checking if the player knows Firebolt
+                firebolt(player, monster)
+            if monster.is_alive():
+                monster.attack_target(player)
+            else:
+                    print("You do not know any spells.")
         elif action.lower() == "use item":
             if "potion" in player.inventory:
-                print("You use a potion and restore 30 HP.")
-                player.health = min(player.max_health, player.health + 30)
+                print("You use a potion and restore your health to full.")
+                player.health = player.max_health
                 player.inventory.remove("potion")
-                print(f"Your health is now {player.health}/{player.max_health}.")
+                print(f"Your health is now fully restored: {player.health}/{player.max_health}.")
             else:
                 print("You have no items to use.")
         elif action.lower() == "flee":
-            if random.random() < 0.5:
+            if random.random() < 0.4:
                 print("You successfully fled from combat!")
-                # Implement fleeing logic, e.g., return to previous room
+                print("You successfully fled from combat!")
+                previous_room()  # Go back to the previous room
+       
                 return
             else:
                 print("Failed to flee!")
@@ -242,10 +824,15 @@ def combat(player, monster):
         player.gain_experience(monster.xp_reward)
     else:
         print(f"\nYou have been defeated by the {monster.name}.")
+        
+        
 
 def end_game():
     print("\nThank you for playing The Adventure Game!")
     sys.exit()
+
+if __name__ == "__main__":
+    intro()
 
 if __name__ == "__main__":
     intro()
