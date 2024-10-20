@@ -1,3 +1,18 @@
+Special Instructions.
+THe combat GUI does not close automatically. Trying to restart the GUI does no work and just ends up restarting the kernal wiping all progress. The game ends at the alpha wolf pack in the forrest path coninued. 
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
 Created on Fri Oct 18 18:14:35 2024
 
