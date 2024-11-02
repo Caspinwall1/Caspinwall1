@@ -19,7 +19,7 @@
 
 -<b> Powershell Automation Scripts</b>
  - Server Restart
--
+ - [Get OS Info](https://github.com/Caspinwall1/Caspinwall1/blob/main/Get%20Os%20info)
 
 <h2> 🤳 Connect with me:</h2>
 ### Systems Engineer | General Informatics (July 2024 - Present)
