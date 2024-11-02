@@ -1,0 +1,56 @@
+[CmdletBinding()]
+param(
+    [Parameter(
+        Mandatory = $True,
+        ValueFromPipeline = $True,
+        ValueFromPipelineByPropertyName = $True,
+        HelpMessage = "The Computer Name."
+    )]
+    [Alias('Hostname', 'cn')]
+    [string[]] $ComputerName
+)
+
+BEGIN {}
+
+PROCESS {
+    foreach ($computer in $ComputerName) {
+        try {
+            $session = New-CimSession -ComputerName $computer -ErrorAction Stop
+            $os = Get-CimInstance -Verbose:$false -CimSession $session -ClassName Win32_OperatingSystem
+            $cs = Get-CimInstance -Verbose:$false -CimSession $session -ClassName Win32_ComputerSystem
+
+            $properties = @{
+                ComputerName = $computer
+                Status       = 'Connected'
+                SPVersion    = $os.ServicePackMajorVersion
+                OSVersion    = $os.Version
+                Model        = $cs.Model
+                Mfgr         = $cs.Manufacturer
+            }
+
+            $obj = New-Object -TypeName PSObject -Property $properties
+            Write-Output $obj
+
+        } catch {
+            Write-Verbose "Couldn't connect to $computer"
+            
+            $properties = @{
+                ComputerName = $computer
+                Status       = 'Disconnected'
+                SPVersion    = $null
+                OSVersion    = $null
+                Model        = $null
+                Mfgr         = $null
+            }
+
+            $obj = New-Object -TypeName PSObject -Property $properties
+            Write-Output $obj
+        } finally {
+            if ($session) {
+                Remove-CimSession -CimSession $session
+            }
+        }
+    }
+}
+
+END {}
