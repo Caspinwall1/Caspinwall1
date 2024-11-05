@@ -1,0 +1,35 @@
+
+# Function to check VSS Writers status and restart services if necessary
+function Check-And-Restart-VSSWriters {
+    # Get VSS writer status
+    $writers = vssadmin list writers | Select-String 'Writer name|State'
+
+    # Look for failed or incomplete writers
+    if ($writers -match "Waiting for completion|Failed") {
+        Write-Output "VSS Writers in 'Failed' or 'Waiting' state detected. Attempting to restart services..."
+
+        # Attempt to restart required services
+        $services = @(
+            "System Event Notification Service",
+            "Background Intelligent Transfer Service",
+            "COM+ Event System",
+            "Volume Shadow Copy",
+            "Microsoft Software Shadow Copy Provider"
+        )
+
+        foreach ($service in $services) {
+            try {
+                Stop-Service -DisplayName $service -Force -ErrorAction Stop
+                Start-Service -DisplayName $service
+                Write-Output "service restarted successfully."
+            } catch {
+                Write-Output "Failed to restart service: $(${_})"
+            }
+        }
+    } else {
+        Write-Output "All VSS Writers are in a stable state."
+    }
+}
+
+# Execute function to check and restart services if necessary
+Check-And-Restart-VSSWriters
