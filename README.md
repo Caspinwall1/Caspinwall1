@@ -18,9 +18,10 @@
   - Adventure RPG (GUI based)
 
 -<b> Powershell Automation Scripts</b>
- - Server Restart
+ - [Server Restar](thttps://github.com/Caspinwall1/Caspinwall1/blob/main/weekly%20server%20restart)
  - [Get OS Info](https://github.com/Caspinwall1/Caspinwall1/blob/main/Get%20Os%20info)
  - [VSS Writers Check and Restart](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)
+ - [Simple Scripts]
 
 <h2> 🤳 Connect with me:</h2>
 ### Systems Engineer | General Informatics (July 2024 - Present)
