@@ -15,7 +15,7 @@
   - Distance Traveled
   - Triangle
   - [Adventure Game](https://github.com/Caspinwall1/Caspinwall1/blob/main/Adventure_Game)
-  - Adventure RPG (GUI based)
+  - [Adventure RPG (GUI based)](https://github.com/Caspinwall1/Caspinwall1/blob/main/ADV%20RPG%20GUI)
 
 -<b> Powershell Automation Scripts</b>
  - [Server Restart](https://github.com/Caspinwall1/Caspinwall1/blob/main/weekly%20server%20restart)
