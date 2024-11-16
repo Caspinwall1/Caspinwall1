@@ -1,0 +1,1364 @@
+"""
+Created on Fri Oct 18 18:14:35 2024
+
+@author: c7v7a
+"""
+
+import sys
+import random
+import tkinter as tk
+from tkinter import ttk
+
+class CombatGUI:
+    def __init__(self, root, player, monster,  on_flee, on_win, on_lose,):
+        self.root = root
+        self.player = player
+        self.monster = monster
+        self.on_flee = on_flee
+        self.on_win = on_win  # Callback for winning
+        self.on_lose = on_lose  # Callback for losing
+        
+
+        # Set up the window
+        root.title("Combat")
+        root.geometry("500x400")
+        
+        # Binding the close event
+        root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+   # Player and Monster Stats Display
+        self.player_label = tk.Label(root, text=self.get_player_stats())
+        self.player_label.pack()
+
+        # Player Health Bar Canvas
+        #self.player_health_canvas = tk.Canvas(root, width=300, height=20)
+       # self.player_health_canvas.pack()
+       # self.update_player_health_bar()
+        self.health_bar = tk.Canvas(self.root, width=100, height=20, bg="black")
+        self.health_bar.pack(pady=10)
+        self.health_bar.create_rectangle(0, 0, 100, 20, fill="red", tags="health_background")
+        self.health_bar.create_rectangle(0, 0, 100, 20, fill="green", tags="health_fill")
+
+        
+        
+        # Create the canvas for the mana bar
+        self.mana_bar = tk.Canvas(self.root, width=100, height=20, bg="black")
+        self.mana_bar.pack(pady=10)
+        self.mana_bar.create_rectangle(0, 0, 100, 20, fill="black", tags="mana_background")
+        self.mana_bar.create_rectangle(0, 0, 100, 20, fill="blue", tags="mana_fill")  # Blue for mana
+
+        # Update bars initially
+        self.player.update_gui(self.health_bar, self.mana_bar)
+
+        # Example button to simulate mana and health changes
+        self.simulate_button = tk.Button(self.root, text="Simulate Change", command=self.simulate_change)
+        self.simulate_button.pack(pady=10)
+
+    def simulate_change(self):
+        # Simulate some change to health and mana
+        self.player.health -= 10
+        self.player.mana -= 5
+
+        # Update the GUI after changes
+        self.player.update_gui(self.health_bar, self.mana_bar)
+
+        self.monster_label = tk.Label(root, text=self.get_monster_stats())
+        self.monster_label.pack()
+
+        # Monster Health Bar Canvas
+        self.monster_health_canvas = tk.Canvas(root, width=300, height=20)
+        self.monster_health_canvas.pack()
+        self.update_monster_health_bar()
+
+
+        # Combat Log (text box)
+        self.combat_log = tk.Text(root, height=10, width=50)
+        self.combat_log.pack()
+
+        # Action Buttons (attack, defend, cast spell, use item, flee)
+        button_frame = tk.Frame(root)  # Create a frame to hold buttons
+        button_frame.pack(pady=20)  # Add some vertical padding
+
+        self.attack_button = tk.Button(button_frame, text="Attack", command=self.attack, bg='red')
+        self.attack_button.pack(side=tk.LEFT, padx=5)  # Add horizontal padding
+
+        self.defend_button = tk.Button(button_frame, text="Defend", command=self.defend, bg='blue')
+        self.defend_button.pack(side=tk.LEFT, padx=5)
+
+        self.cast_spell_button = tk.Button(button_frame, text="Cast Spell", command=self.cast_spell, bg='brown')
+        self.cast_spell_button.pack(side=tk.LEFT, padx=5)
+
+        self.item_button = tk.Button(button_frame, text="Use Item", command=self.use_item, bg='gold')
+        self.item_button.pack(side=tk.LEFT, padx=5)
+
+        self.flee_button = tk.Button(button_frame, text="Flee", command=self.flee, bg='orange')
+        self.flee_button.pack(side=tk.LEFT, padx=5)
+        
+    def get_player_stats(self):
+        return f"{self.player.name} - HP: {self.player.health}/{self.player.max_health}, Mana: {self.player.mana}/{self.player.max_mana}"
+
+    def get_monster_stats(self):
+        return f"{self.monster.name} - HP: {self.monster.health}/{self.monster.max_health}"
+    def update_player_health_bar(self):
+        """Update the player health bar to reflect current health."""
+        self.player_health_canvas.delete("all")  # Clear the canvas
+
+        # Calculate the health ratios
+        health_ratio = self.player.health / self.player.max_health
+        missing_health_ratio = 1 - health_ratio
+        
+        # Draw the green rectangle for current health
+        self.player_health_canvas.create_rectangle(0, 0, 300 * health_ratio, 20, fill='green', outline='')
+
+        # Draw the red rectangle for missing health
+        self.player_health_canvas.create_rectangle(300 * health_ratio, 0, 300, 20, fill='red', outline='')
+        
+    def update_mana_bar(self, mana_bar):
+        mana_percent = self.mana / self.max_mana
+        mana_bar.coords("mana_fill", 0, 0, mana_percent * 100, 20)  # Update mana bar width
+        mana_bar.itemconfig("mana_fill", fill="blue")  # Blue for mana
+        mana_bar.itemconfig("mana_background", fill="black")  # Black for missing mana
+
+    def update_monster_health_bar(self):
+        """Update the monster health bar to reflect current health."""
+        self.monster_health_canvas.delete("all")  # Clear the canvas
+
+        # Calculate the health ratios
+        health_ratio = self.monster.health / self.monster.max_health
+        missing_health_ratio = 1 - health_ratio
+        
+        # Draw the green rectangle for current health
+        self.monster_health_canvas.create_rectangle(0, 0, 300 * health_ratio, 20, fill='green', outline='')
+
+        # Draw the red rectangle for missing health
+        self.monster_health_canvas.create_rectangle(300 * health_ratio, 0, 300, 20, fill='red', outline='')
+
+    def update_labels(self):
+        self.player_label.config(text=self.get_player_stats())
+        self.monster_label.config(text=self.get_monster_stats())
+        self.update_player_health_bar()  # Update health bar each time labels are updated
+        self.update_monster_health_bar()  # Update health bar each time labels are updated
+
+    def append_log(self, message):
+        self.combat_log.insert(tk.END, message + "\n")
+        self.combat_log.see(tk.END)  # Scroll to the end
+    
+    def combat_end(self):
+        if self.player.is_alive():
+            print(f"{self.player.name} has won the battle!")
+            self.player.gain_experience(self.monster.xp_reward)  # Award XP on victory
+            self.on_win()
+        else:
+            print(f"{self.player.name} has lost the battle!")
+            self.on_lose()
+        
+        self.root.destroy()  # Close the GUI
+    
+    def update_player_stats(self):
+
+
+    # Format the statistics string, including experience, level, and other relevant information
+        stats_string = f"{self.player.name} - HP: {self.player.health}/{self.player.max_health}, Mana: {self.player.mana}/{self.player.max_mana}, XP: {self.player.experience}, Level: {self.player.level}"
+
+    # Update the player label with the formatted statistics
+        self.player_label.config(text=stats_string)
+
+    def attack(self):
+        self.append_log(f"{self.player.name} attacks {self.monster.name}!")
+        self.player.attack_target(self.monster)
+        self.update_labels()
+
+        if not self.monster.is_alive():
+            self.append_log(f"You have defeated {self.monster.name}!")
+            self.combat_end()  # Call combat_end to handle victory
+        else:
+            self.append_log(f"{self.monster.name} attacks {self.player.name}!")
+            self.monster.attack_target(self.player)
+            self.update_labels()
+
+        if not self.player.is_alive():
+            self.append_log("You have been defeated!")
+            self.combat_end()  # Call combat_end to handle loss
+    def defend(self):
+        # Player defends, reducing damage
+        self.append_log(f"{self.player.name} defends!")
+        original_defense = self.player.defense
+        self.player.defense += 5
+        self.monster.attack_target(self.player)
+        self.player.defense = original_defense
+        self.update_labels()
+
+    def cast_spell(self):
+        # Player casts firebolt if they have enough mana
+        if "firebolt" in self.player.spells:
+            self.append_log(f"{self.player.name} casts Firebolt!")
+            firebolt(self.player, self.monster)
+            self.update_labels()
+            
+            if self.monster.is_alive():
+                self.append_log(f"{self.monster.name} attacks {self.player.name}!")
+                self.monster.attack_target(self.player)
+                self.update_labels()
+        else:
+            self.append_log("You do not know any spells.")
+
+    def use_item(self):
+        # Player uses a potion
+        if "potion" in self.player.inventory:
+            self.append_log(f"{self.player.name} uses a potion!")
+            self.player.health = self.player.max_health
+            self.player.inventory.remove("potion")
+            self.update_labels()
+        else:
+            self.append_log("No items left!")
+
+    def flee(self):
+        """Attempt to flee from combat."""
+        if random.random() < 0.5:
+           self.append_log(f"{self.player.name} fled from combat!")
+           self.root.destroy()  # Properly close the combat window on flee
+           self.on_flee()  # Call the flee callback (if needed)
+           self.flee_callback()
+           self.root.destroy()
+        else:
+           self.append_log("Failed to flee!")
+           self.monster.attack_target(self.player)
+           self.update_labels()
+           self.enemy_turn()
+
+            # Check if the player is dead after failed flee
+        if not self.player.is_alive():
+                self.append_log("You have been defeated!")
+                self.combat_end()  # End combat if the player is defeated
+                self.root.destroy()
+            
+    def on_close(self):
+        # Handle the close event
+        self.root.quit()  # This will close the Tkinter window
+
+
+class Character:
+    def __init__(self, name, health, attack, defense, mana):
+        self.name = name
+        self.max_health = health
+        self.health = health
+        self.attack = attack
+        self.defense = defense
+        self.max_mana = mana
+        self.mana = mana
+
+    def is_alive(self):
+        return self.health > 0
+
+    def take_damage(self, damage):
+        actual_damage = max(damage - self.defense, 0)
+        self.health -= actual_damage
+        print(f"{self.name} takes {actual_damage} damage! (HP: {self.health}/{self.max_health})")
+        if not self.is_alive():
+            print(f"{self.name} has been defeated!")
+
+    def attack_target(self, target):
+        print(f"{self.name} attacks {target.name}!")
+        target.take_damage(self.attack)
+    
+    def heal(self, amount):
+        self.health += amount
+        if self.health > self.max_health:
+            self.health = self.max_health
+        print(f"{self.name} heals for {amount} points. (HP: {self.health}/{self.max_health})")
+
+    def full_heal(self):
+        self.health = self.max_health
+        print(f"{self.name} has been fully healed. (HP: {self.health}/{self.max_health})")
+        
+    def update_gui(self, health_bar, mana_bar):
+        self.update_health_bar(health_bar)
+        self.update_mana_bar(mana_bar)
+        
+    def update_health_bar(self, health_bar):
+        health_percent = self.health / self.max_health
+        health_bar.coords("health_fill", 0, 0, health_percent * 100, 20)  # Update health bar width
+        health_bar.itemconfig("health_fill", fill="green")
+        health_bar.itemconfig("health_background", fill="red")
+        
+    def update_mana_bar(self, mana_bar):
+        mana_percent = self.mana / self.max_mana
+        mana_bar.coords("mana_fill", 0, 0, mana_percent * 100, 20)  # Update mana bar width
+        mana_bar.itemconfig("mana_fill", fill="blue")  # Blue for mana
+        mana_bar.itemconfig("mana_background", fill="black")  # Black for missing mana
+
+class Player(Character):
+    def __init__(self, name):
+        super().__init__(name, health=50, attack=5, defense=5, mana=10)
+        self.level = 1
+        self.experience = 0
+        self.inventory = []
+        self.spells = []
+        self.bandit_killed = False
+
+    def gain_experience(self, xp):
+        self.experience += xp
+        print(f"{self.name} gains {xp} XP! (Total XP: {self.experience})")
+        self.check_level_up()  # Check for level-up after gaining XP
+
+    def check_level_up(self):
+        # Calculate experience needed for the next level (increase by 50% each level)
+        xp_for_next_level = int(10 * (1.5 ** (self.level - 1)))
+
+        if self.experience >= xp_for_next_level:
+            # Level up the player
+            self.level += 1
+            self.experience -= xp_for_next_level
+            self.max_health += 10
+            self.health = self.max_health
+            self.attack += 3
+            self.defense += 3
+            self.max_mana += 10
+            print(f"Congratulations! {self.name} has reached Level {self.level}!")
+            print(f"Stats increased: HP={self.max_health}, Attack={self.attack}, Defense={self.defense}, Mana={self.max_mana}")
+            print(f"Next level XP required: {xp_for_next_level * 1.5}")
+            
+
+class Monster(Character):
+    def __init__(self, name, health, attack, defense, xp_reward):
+        super().__init__(name, health, attack, defense, mana=0)
+        self.xp_reward = xp_reward
+
+# Initialize the player
+player = Player(name="Hero")
+
+def intro():
+    print("Welcome to the Adventure Game with Stats!")
+    print(f"Character: {player.name}")
+    print(f"HP: {player.health}/{player.max_health}, Attack: {player.attack}, Defense: {player.defense}")
+    print("\nYou find yourself in a dark dungeon with two doors.")
+    print("Do you choose to go through Door 1 or Door 2?")
+    choice = input("> ")
+
+    if choice == "1":
+        room1()
+    elif choice == "2":
+        room2()
+    else:
+        print("Invalid choice. Please choose 1 or 2.")
+        intro()
+        
+def firebolt(player, target):
+    mana_cost = 20
+    if player.mana >= mana_cost:
+        player.mana -= mana_cost
+        damage = player.attack * 1.5  # Firebolt deals 1.5x player's attack
+        print(f"{player.name} casts Firebolt! It deals {damage} damage.")
+        target.health -= damage
+    else:
+        print("Not enough mana to cast Firebolt!")
+        
+def camp(next_room):
+    print("\nYou decide to set up camp and rest for the night...")
+    print("You are fully healed after a night's rest.")
+    
+    # Heal the player and restore mana
+    player.full_heal()  # This should heal the player to full health
+    player.mana = player.max_mana  # Restore mana to max
+
+    # If using a GUI, make sure to refresh the health/mana display in the GUI
+    if hasattr(player, 'update_gui'):
+        player.update_gui()  # Assuming there's a method to refresh the player's stats in the GUI
+
+    # Check if the bandit was killed, and roll for a 25% chance of revenge
+    if player.bandit_killed:
+        if random.random() < 0.25:  # 25% chance
+            print("\nYour rest is interrupted by the Revenge of the Bandit!")
+            revenge_of_the_bandit(next_room)
+        else:
+            print("You rest peacefully through the night.")
+            next_room()  # Proceed to the next room after resting
+    else:
+        print("You rest peacefully through the night.")
+        next_room()  # Proceed to the next room
+
+def revenge_of_the_bandit(next_room):
+    print("\nThe bandit you killed earlier had friends and they came for revenge!")
+    revenge_bandit = Monster(name="Revengeful Bandits", health=250, attack=30, defense=20, xp_reward=75)
+    root = tk.Tk()
+
+    def handle_win():
+        # This function is called when the player wins the combat
+        print("You defeated the revengeful bandits.")
+        print("You can make use of one of their helmets and chainmail.")
+        player.defense += 10  # Increase player's defense
+        next_room()  # Proceed to the next room after the battle
+
+    def handle_loss():
+        # This function is called when the player loses the combat
+        print("The revengeful bandit got the better of you this time.")
+        end_game()  # End the game after player death
+
+    # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+        root,
+        player,
+        revenge_bandit,
+        camp,  # Option to flee can send the player back to camp
+        handle_win,  # On win
+        handle_loss,  # On loss
+    )
+
+    root.mainloop()  # Start the GUI event loop
+
+def room1():
+    print("\nYou enter Room 1. It's a dimly lit room with a table in the center.")
+    print("On the table, there is a key and a mysterious potion.")
+    print("Do you take the key or the potion?")
+    choice = input("> ")
+
+    if choice.lower() == "key":
+        print("\nYou take the key. It might be useful later.")
+        player.inventory.append("key")
+        room1_continued()
+    elif choice.lower() == "potion":
+        print("\nYou take the potion and store it in your inventory for later.")
+        player.inventory.append("potion")
+        room1_continued()
+    else:
+        print("Invalid choice. Please type 'key' or 'potion'.")
+        room1()
+
+def room1_continued():
+    print("\nAfter your decision, you see two paths ahead.")
+    print("Do you go left or right?")
+    choice = input("> ")
+
+    if choice.lower() == "left":
+        if "key" in player.inventory:
+            print("\nYou use the key to unlock a hidden door and find the exit. You exit and come to a path.")
+            bandit_encounter()
+        else:
+            print("\nThe door is locked. You need a key to open it.")
+            room1_continued()
+    elif choice.lower() == "right":
+        encounter_dragon()
+    else:
+        print("Invalid choice. Please type 'left' or 'right'.")
+        room1_continued()
+def bandit_encounter():
+    print("\nOn that path you encounter a bandit.")
+    bandit = Monster(name = "bandit", health=25, attack=8, defense=3, xp_reward=15)
+    root = tk.Tk()
+    combat_window = CombatGUI(
+        root,
+        player,
+        bandit,
+        room1_continued, #flee
+        path, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+    if player.is_alive():
+        print("You killed the bandit!")
+        print("\nYou take the bandit's sword. It feels powerful in your hand.")
+        player.attack += 5
+        player.bandit_killed = True
+        player.gain_experience(bandit.xp_reward)
+        path()
+    else:
+        print("The bandit slit your throat and scalped you!")
+        end_game()
+        
+def path():
+    print("After defeating the bandit you continue along the path.")
+    print("You come up to a bridge. Do you continue on to the bridge or do you go around?")
+    choice = input("> ")
+
+    if choice.lower() == "bridge":
+        bridge()
+    elif choice.lower() == "around":
+        river()
+    else:
+        print("Invalid choice. Please choose bridge or around.")
+        path()
+def bridge():
+    print("You walk up the bridge. It is quite nice here.")
+    print("As you walk further a troll stands in your way")
+    troll = Monster(name="Troll", health=100, attack=15, defense=5, xp_reward=25)
+    root = tk.Tk()
+
+    # Define handle_win before it's used
+    def handle_win():
+        # This function is called when the player wins the combat
+        print("You defeated the troll and cross the bridge.")
+        print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+        
+        while True:  # Loop until a valid choice is made
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+            if choice.lower() == "camp":
+                camp(next_room=crossroads())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                crossroads()  # After camping, ask the player to choose the bridge or around
+                break  # Exit the loop after handling camping
+            elif choice.lower() == "continue":
+                crossroads()
+                break  # Exit the loop after continuing
+            else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+
+    # Create the combat GUI and pass the camping function as the on_win callback
+    combat_window = CombatGUI(
+        root,
+        player,
+        troll,
+        path,  # flee
+        handle_win,  # on win
+        end_game,  # on loss
+    )
+    
+    root.mainloop()  # This will start the combat GUI
+
+def river():
+    print("You decide to brave the river.")
+    print("The river is challenging to swim across but, you can manage.")
+    print("As you swim you see two reptilian eyes staring at you!")
+    Alligator = Monster(name="alligator", health=50, attack=25, defense=5, xp_reward=30)
+    root = tk.Tk()
+    def handle_win():
+        # This function is called when the player wins the combat
+        print("You wrestle with the alligator and kill it with your sword.")
+        print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+        
+        while True:  # Loop until a valid choice is made
+            choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+            if choice.lower() == "camp":
+                camp(next_room=crossroads())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                crossroads()  # After camping, ask the player to choose the bridge or around
+                break  # Exit the loop after handling camping
+            elif choice.lower() == "continue":
+                crossroads()
+                break  # Exit the loop after continuing
+            else:
+                print("Invalid choice. Please type 'camp' or 'continue'.")
+    combat_window = CombatGUI(
+        root,
+        player,
+        Alligator,
+        path, #flee
+        handle_win, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+    #if player.is_alive():
+
+    
+           
+   # else:
+            #print("The alligator eats you whole!")
+            #end_game()
+            
+def crossroads():
+    print("You come to an alter and on that alter is a message.")
+    print("You have done well coming this far you can either continue on this path or I can send you back to the dungeon?")
+    choice = input("> ")
+
+    if choice.lower() == "continue":
+        path_continued()
+    elif choice.lower() == "dungeon":
+        intro()
+    else:
+        print("Invalid choice. Please choose continue or dungeon.")
+        crossroads()
+        
+def path_continued():
+    print("You continue along the path.")
+    print("A pack of wolves ambush you!")
+    Pack_of_wolves = Monster(name="pack of wolves", health=200, attack=30, defense=10, xp_reward=50)
+        
+    root = tk.Tk()
+
+    def handle_win():
+            # This function is called when the player wins the combat
+            print("You vanquish the wolves one by one.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+            
+            while True:  # Loop until a valid choice is made
+                choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+                if choice.lower() == "camp":
+                    camp(next_room=forrest_path())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    forrest_path()  # After camping, ask the player to choose the bridge or around
+                    break  # Exit the loop after handling camping
+                elif choice.lower() == "continue":
+                    forrest_path()
+                    break  # Exit the loop after continuing
+                else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+
+    def handle_loss():
+            # This function is called when the player loses the combat
+            print("The wolfpack eats you alive!")
+            end_game()  # End the game after player death
+
+        # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+            root,
+            player,
+            Pack_of_wolves,
+            crossroads,  # Flee (if applicable, adjust this as needed)
+            handle_win,  # On win
+            handle_loss,  # On loss
+        )
+
+    root.mainloop()  # Start the GUI event loop
+    
+def forrest_path():
+    print("As you walk further into the woods you spot a bandit camp.")
+    print("Do you continue on the path or do you enter the camp?")
+    choice = input("> ")
+
+    if choice.lower() == "continue":
+        forrest_path_continued()
+    elif choice.lower() == "camp":
+        bandit_camp_gate()
+    else:
+        print("Invalid choice. Please choose continue or camp.")
+        forrest_path()
+    
+def forrest_path_continued():
+    print("You continue down the path")
+    print("in the middle of the path you see a huge wolf and several smaller ones")
+    print("Do you attack the Alpha and the rest of his pack or do you go back?")
+    choice = input("> ")
+
+    if choice.lower() == "attack":
+       Alpha_with_wolfpack = Monster(name = "Alpha and his pack", health=500, attack=100, defense=10, xp_reward=100)
+       combat(player,  Alpha_with_wolfpack, forrest_path_continued)
+       if player.is_alive():
+           print("You finally put an end to the alpha and his pack!")
+           print("This path is to be continued")
+           end_game()
+       else:
+           print("The pack eats you alive!")
+           end_game()
+    elif choice.lower() == "back":
+        forrest_path()
+    else:
+        print("Invalid choice. Please choose continue or camp.")
+        forrest_path_continued()
+        
+def bandit_camp_gate():
+    print("You come up to the gate and you see two bandits guarding the gates.")
+    print("Do you attack the bandits or go back?")
+    choice = input("> ")
+
+    if choice.lower() == "attack":
+        Bandit_gate_guards = Monster(name = "Bandit Gate Guards", health=100, attack=20, defense=20, xp_reward=50)
+        root = tk.Tk()
+
+        def handle_win():
+            # This function is called when the player wins the combat
+           print("You kill the guards.")
+           bandit_camp_lower()
+            
+
+        def handle_loss():
+            # This function is called when the player loses the combat
+            print("The guards decapitate you and put your head on a spike!")
+            end_game()  # End the game after player death
+
+        # Create the combat GUI and pass the callback functions
+        combat_window = CombatGUI(
+            root,
+            player,
+            Bandit_gate_guards,
+            forrest_path,  # Flee (if applicable, adjust this as needed)
+            handle_win,  # On win
+            handle_loss,  # On loss
+            )
+
+        root.mainloop()
+      
+   
+          
+    elif choice.lower() == "back":
+        forrest_path()
+    else:
+        print("Please enter attack or back.")
+    
+def bandit_camp_lower():
+    print("You open the gates and bandits start charging at you while others shoot arrows in your direction!")
+    Bandit_squad = Monster(name = "Bandit Squad", health=500, attack=75, defense=20, xp_reward=100)
+    root = tk.Tk()
+
+    def handle_win():
+            # This function is called when the player wins the combat
+            print("You kill the bandits.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+            
+            while True:  # Loop until a valid choice is made
+                choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+                if choice.lower() == "camp":
+                    camp(next_room=bandit_camp_lower_incline())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    bandit_camp_lower_incline()  # After camping, ask the player to choose the bridge or around
+                    break  # Exit the loop after handling camping
+                elif choice.lower() == "continue":
+                    bandit_camp_lower_incline()
+                    break  # Exit the loop after continuing
+                else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+
+    def handle_loss():
+            # This function is called when the player loses the combat
+            print("The bandits decapitate you and put your head on a spike!")
+            end_game()  # End the game after player death
+
+        # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+            root,
+            player,
+            Bandit_squad,
+            bandit_camp_gate,  # Flee (if applicable, adjust this as needed)
+            handle_win,  # On win
+            handle_loss,  # On loss
+        )
+
+    root.mainloop()
+   
+           
+def bandit_camp_lower_incline():
+    print("You race up the dirt path that leads to another gate")
+    print("These look like tough gate guards. With arrows flying towards you attack the gate guards")
+    Elite_Bandit_gate_guards = Monster(name = " Elite Bandit Gate Guards", health=250, attack=50, defense=40, xp_reward=100)
+    root = tk.Tk()
+
+    def handle_win():
+            # This function is called when the player wins the combat
+           print("You kill the guards.")
+           bandit_camp_upper()
+            
+
+    def handle_loss():
+            # This function is called when the player loses the combat
+            print("The guards decapitate you and put your head on a spike!")
+            end_game()  # End the game after player death
+
+        # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+            root,
+            player,
+            Elite_Bandit_gate_guards,
+            bandit_camp_gate,  # Flee (if applicable, adjust this as needed)
+            handle_win,  # On win
+            handle_loss,  # On loss
+            )
+
+    root.mainloop()
+ 
+           
+def bandit_camp_upper():
+    print("As you open the door you see an even larger tougher group of bandits charging at you!")
+    Elite_Bandit_squad = Monster(name = "Elite Bandit Group", health=1000, attack=110, defense=75, xp_reward=200)
+    root = tk.Tk()
+    def handle_win():
+            # This function is called when the player wins the combat
+            print("You kill the bandits.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+            
+            while True:  # Loop until a valid choice is made
+                choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+                if choice.lower() == "camp":
+                    camp(next_room=Bandit_Kings_Hall())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                    Bandit_Kings_Hall()  # After camping, ask the player to choose the bridge or around
+                    break  # Exit the loop after handling camping
+                elif choice.lower() == "continue":
+                    Bandit_Kings_Hall()
+                    break  # Exit the loop after continuing
+                else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+
+    def handle_loss():
+            # This function is called when the player loses the combat
+            print("The bandits decapitate you and put your head on a spike!")
+            end_game()  # End the game after player death
+
+        # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+            root,
+            player,
+            Elite_Bandit_squad,
+            bandit_camp_gate,  # Flee (if applicable, adjust this as needed)
+            handle_win,  # On win
+            handle_loss,  # On loss
+        )
+
+    root.mainloop()
+
+           
+def Bandit_Kings_Hall():
+    print("You bust open the doors and you see the Bandit King with bodyguards with crossbows pointed at you.")
+    print("You got some guts ill give you that. But, your death is already here. I will make your death a painful one and put your head on a spike!")
+    Bandit_King = Monster(name = " Bandit King and his men", health=5000, attack=500, defense=500, xp_reward=1000)
+    def handle_win():
+            # This function is called when the player wins the combat
+            print("You killed the bandit king himself and take his battleaxe.")
+            player.attack += 100
+            print("You saved the princess.")
+            print("You can end the game in another victory or you can continue on the forrest path")
+            choice = input("> ")
+            if choice == "end":
+                end_game()
+            elif choice == "continue":
+                forrest_path()
+            else:
+                print("Please enter end or continue")
+
+    def handle_loss():
+            # This function is called when the player loses the combat
+            print("The bandit kick slices your open and rips your rib cage out!")
+            print("The king decapitate you and put your head on a spike!")
+            end_game()  # End the game after player death
+
+        # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+            root,
+            player,
+            Bandit_King,
+            bandit_camp_gate,  # Flee (if applicable, adjust this as needed)
+            handle_win,  # On win
+            handle_loss,  # On loss
+        )
+
+    root.mainloop()
+    
+  
+def encounter_dragon():
+    print("\nYou encounter a sleeping dragon!")
+    baby_dragon = Monster(name="Baby Dragon", health=500, attack=40, defense=20, xp_reward=100)
+    root = tk.Tk()
+    def handle_win():
+       # This function is called when the player wins the combat
+       print("With the dragon defeated, you feel the need to rest.")
+       print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+       
+       while True:  # Loop until a valid choice is made
+           choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+           if choice.lower() == "camp":
+               camp(next_room=crumbling_room())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+               crumbling_room()  # After camping, ask the player to choose the bridge or around
+               break  # Exit the loop after handling camping
+           elif choice.lower() == "continue":
+               crumbling_room()
+               break  # Exit the loop after continuing
+           else:
+               print("Invalid choice. Please type 'camp' or 'continue'.")
+    combat_window = CombatGUI(
+        root,
+        player,
+        baby_dragon,
+        room1, #flee
+        handle_win, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+  #  if player.is_alive():
+       
+    
+     #   choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+    
+      #  if choice.lower() == "camp":
+              #  camp(next_room=crumbling_room)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+              #  crumbling_room()  # After camping, ask the player to choose the bridge or around
+
+       # elif choice.lower() == "continue":
+              #  crumbling_room()
+
+       # else:
+               # print("Invalid choice. Please type 'camp' or 'continue'.")
+              #  camp(next_room=crumbling_room)  # Recursively call the function if input is invalid
+               # crumbling_room()
+   # else:
+      #  print("You were slain by the dragon. Game Over.")
+      #  end_game()
+def crumbling_room():
+    print("As you come to you realize that the room is crumbling quickly")
+    print("Out of the corner of your eye you see a metal barrel with a lid.")
+    print("Do you get in the barrel or jump?")
+    choice = input("> ")
+
+    if choice == "barrel":
+        print("You get out of the barrel and can barely see it is so dark in here!")
+        dark_hallway()
+    elif choice.lower() == "jump":
+        print("You jump and end up being crushed by falling rocks.")
+        end_game()
+    else:
+          print("Invalid choice. Please choose barrel or jump.")
+          
+    
+def room2():
+    print("\nYou enter Room 2. It's a large hall with two statues.")
+    print("One statue holds a sword, and the other holds a shield.")
+    print("Do you take the sword or the shield?")
+    choice = input("> ")
+
+    if choice.lower() == "sword":
+        print("\nYou take the sword. It feels powerful in your hand.")
+        player.attack += 5
+        print(f"Your attack is now {player.attack}.")
+        room2_continued()
+    elif choice.lower() == "shield":
+        print("\nYou take the shield. It might protect you later.")
+        player.defense += 5
+        print(f"Your defense is now {player.defense}.")
+        room2_continued()
+    else:
+        print("Invalid choice. Please type 'sword' or 'shield'.")
+        room2()
+
+def room2_continued():
+    print("\nAfter your decision, a feral rat attacks you.")
+    feral_rat = Monster(name="Feral Rat", health=15, attack=10, defense=3, xp_reward=10)
+    root = tk.Tk()
+    combat_window = CombatGUI(
+        root,
+        player,
+        feral_rat,
+        intro, #flee
+        room2_choices, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+    if player.is_alive():
+            print("You defeated the Rat.")
+            player.gain_experience(feral_rat.xp_reward)
+            room2_choices()
+    else:
+            print("The rat overpowered you. You lose!")
+            end_game()
+def room2_choices():
+    print("\n After defeating the rat you see the door that leads to room 1 or an open door that leads to a hallway")
+    print("Do you open door 1 or walk into the hallway?")
+    choice = input("> ")
+
+    if choice == "1":
+        room1()
+    elif choice.lower() == "hallway":
+        Hallway()
+    else:
+          print("Invalid choice. Please choose 1 or hallway.")
+          room2_choices()
+    
+def Hallway():
+    print("\nYou enter the warmly lit hallway.")
+    print("You see a torch on the wall, and a necklace on the ground.")
+    print("\nDo you take the torch or the necklace?")
+    choice = input("> ")
+
+    if choice.lower() == "torch":
+        print("\nYou take the torch. You feel like you will need this later.")
+        player.inventory.append("torch")
+        hallway_continued()
+    elif choice.lower() == "necklace":
+        print("\nYou take the necklace. You feel more tough.")
+        player.max_health += 10
+        print(f"Your health is now {player.health}.")
+        hallway_continued()
+    else:
+        print("Invalid choice. Please type 'torch' or 'necklace'.")
+        room2()
+def hallway_continued():
+    print("Do you go forward or backward")
+    choice = input("> ")
+
+    if choice.lower() == "forward":
+        hallway_forward()
+    elif choice.lower() == "backward":
+        dark_hallway()
+    else:
+        print("Invalid choice. Please choose forward or backward.")
+        hallway_continued()
+
+def hallway_forward():
+    print("\nA skeleton comes charging at you!")
+    skeleton = Monster(name = "skeleton", health=30, attack=15, defense=7, xp_reward=15)
+    root = tk.Tk()
+    combat_window = CombatGUI(
+        root,
+        player,
+        skeleton,
+        hallway_continued, #flee
+        hallway_choices, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+    ##if player.is_alive():
+       # print("You killed the skeleton!")
+      #  hallway_choices()
+   # else:
+       # print("The skeleton cut your heart out! You look at the ceiling as blood pools around you and your vision fades to black.")
+       # end_game()
+
+def dark_hallway():
+    print("\nYou enter a pitch-black room. You can't see anything.")
+    
+    if "torch" in player.inventory:
+        print("Luckily, you have the torch! You light it and can see the room clearly.")
+        print("There are two exits from this room.")
+        # Continue with the game logic, like choosing an exit, finding an item, etc.
+        dark_room_continued()
+    else:
+        print("Without a torch, it's too dangerous to proceed. You have to turn back.")
+        Hallway()
+
+def dark_room_continued():
+    print("\nYou see two doors ahead, one leading to safety, the other to danger.")
+    print("Which door do you choose? Left or right?")
+    choice = input("> ")
+
+    if choice.lower() == "left":
+        print("You find the exit and escape the dungeon! You exit the dungeon and come to a path.")
+        bandit_encounter()
+    elif choice.lower() == "right":
+        print("You encounter a dangerous monster and have to fight!")
+        monster = Monster(name="Dark Monster", health=100, attack=20, defense=10, xp_reward=40)
+    root = tk.Tk()
+    def handle_win():
+       # This function is called when the player wins the combat
+       print("You defeated the monster and see a staircase!")
+       print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+       
+       while True:  # Loop until a valid choice is made
+           choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+           if choice.lower() == "camp":
+               camp(next_room=bottom_of_staircase())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+               bottom_of_staircase()  # After camping, ask the player to choose the bridge or around
+               break  # Exit the loop after handling camping
+           elif choice.lower() == "continue":
+               bottom_of_staircase()
+               break  # Exit the loop after continuing
+           else:
+               print("Invalid choice. Please type 'camp' or 'continue'.")
+    combat_window = CombatGUI(
+        root,
+        player,
+        monster,
+        bottom_of_staircase, #flee
+        handle_win, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+
+        
+def bottom_of_staircase():
+     print("After going down the steps you come to an alter that is in front of a huge door.")
+     print("On the alter is a message that reads, I can send you back to the beginning or you can brave what is behind this door")
+     print("Do you go through the door or go back to where you started.")
+     choice = input("> ")
+
+     if choice.lower() == "door":
+         huge_door()
+     elif choice.lower() == "back":
+         intro()
+     else:
+         print("Invalid choice. Please choose continue or back.")
+         bottom_of_staircase()
+        
+def huge_door():
+    print("You grunt as you open the huge door.")
+    print("Your heart pounds as you are met with a massive green dragon looking right at you!")
+    
+    Green_dragon = Monster(name="Green Dragon", health=1000, attack=100, defense=75, xp_reward=500)
+    
+    root = tk.Tk()
+
+    def handle_win():
+        # This function is called when the player wins the combat
+        print("You killed the Dragon and beat the dungeon!")
+        print("You absorbed some of the ancient knowledge from the dragon!")
+        print("It grants you the spell Firebolt.")
+        player["spells"].append(firebolt)  # Grant the player the Firebolt spell
+        print("You can end the game and be transported outside of the dungeon?")
+        
+        while True:  # Loop until a valid choice is made
+            choice = input("Type 'outside' to exit the dungeon or 'end' to end the game: ")
+            if choice.lower() == "outside":
+                path()  # Transport the player outside of the dungeon
+                break  # Exit the loop after choosing to go outside
+            elif choice.lower() == "end":
+                end_game()  # End the game
+                break  # Exit the loop after choosing to end the game
+            else:
+                print("Invalid choice. Please choose 'outside' or 'end'.")
+
+    def handle_loss():
+        # This function is called when the player loses the combat
+        print("The dragon exhales fire as you turn to ash.")
+        end_game()  # End the game after player death
+
+    # Create the combat GUI and pass the callback functions
+    combat_window = CombatGUI(
+        root,
+        player,
+        Green_dragon,
+        bottom_of_staircase,  # Flee (if applicable, adjust this as needed)
+        handle_win,  # On win
+        handle_loss,  # On loss
+    )
+
+    root.mainloop()  # Start the GUI event loop
+    
+        
+def hallway_choices():
+    print("After vanquishing the skeleton you come across a set of stairs and a door.")
+    print("Do you take the stairs or the door")
+    choice = input("> ")
+
+    if choice.lower() == "stairs":
+        stairs()
+    elif choice.lower() == "door":
+        room3()
+    else:
+        print("Invalid choice. Please choose forward or backward.")
+        hallway_choices()
+        
+def stairs():
+    print("You go up the stairs and a skeleton archer starts shooting arrows at you!!")
+    Skeleton_Archer = Monster(name="Skeleton Archer", health=35, attack=30, defense=5, xp_reward=20)
+    root = tk.Tk()
+    def handle_win():
+       # This function is called when the player wins the combat
+       print("You killed the skeleton archer and continue on the path")
+       print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+       
+       while True:  # Loop until a valid choice is made
+           choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+           if choice.lower() == "camp":
+               camp(next_room=hallway2())  # Trigger the camping mechanic with the 25% bandit revenge encounter
+               hallway2()  # After camping, ask the player to choose the bridge or around
+               break  # Exit the loop after handling camping
+           elif choice.lower() == "continue":
+               hallway2()
+               break  # Exit the loop after continuing
+           else:
+               print("Invalid choice. Please type 'camp' or 'continue'.")
+    combat_window = CombatGUI(
+        root,
+        player,
+        Skeleton_Archer,
+        hallway_choices, #flee
+        handle_win, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+   # if player.is_alive():
+           
+        
+           # choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+        
+           # if choice.lower() == "camp":
+                 #   camp(next_room=hallway2)  # Trigger the camping mechanic with the 25% bandit revenge encounter
+                  #  hallway2()  # After camping, ask the player to choose the bridge or around
+
+           # elif choice.lower() == "continue":
+                  #  hallway2()
+
+           # else:
+                 #   print("Invalid choice. Please type 'camp' or 'continue'.")
+                 #   camp(next_room=hallway2)  # Recursively call the function if input is invalid
+                #    hallway2()
+    #else:
+          #  print("You were defeated by the skeleton.")
+          #  end_game()
+
+def room3():
+    print("You enter the room and notice there are a lot of cobwebs in this room")
+    print("Out of nowhere a spider comes and attacks you!")
+    Venomous_Spider = Monster(name="Venomous Spider", health=50, attack=30, defense=5, xp_reward=22)
+    root = tk.Tk()
+    combat_window = CombatGUI(
+        root,
+        player,
+        Venomous_Spider,
+        hallway_choices, #flee
+        hallway_choices, #on win
+        end_game,  # on loss      
+    )
+    root.mainloop()
+    if player.is_alive():
+            print("You killed the Spider and you coat your weapon in its venom")
+            print("This room is a deadend you turn back")
+            player.attack += 5
+            stairs()
+    else:
+            print("You were defeated by the monster in the darkness.")
+            end_game()
+
+def hallway2():
+    print("As you take the last step you notice an eerily lit hallway")
+    print("You see a pair of boots on one pedestal and a potion on the other which do you take?")
+    choice = input("> ")
+
+    if choice.lower() == "boots":
+        print("\nYou take the boots. The boots make you feel more protected.")
+        player.defense += 5
+        hallway2_continued()
+    elif choice.lower() == "potion":
+        print("\nYou take the potion. You will need it later.")
+        player.inventory.append("potion")
+        hallway2_continued()
+    else:
+        print("Invalid choice. Please type 'boots' or 'potion'.")
+        hallway2()
+
+def hallway2_continued():
+    print("Walking through the hallway you see a wooden golem guarding a stone door.")
+    print("Do you fight the golem or sneak past him?")
+    choice = input("> ")
+
+    if choice.lower() == "fight":
+        Wooden_Golem = Monster(name="Wooden Golem", health=200, attack=30, defense=40, xp_reward=50)
+        root = tk.Tk()
+
+        def handle_win():
+            # This function is called when the player wins the combat
+            print("You defeated the golem and open the door.")
+            print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+            
+            while True:  # Loop until a valid choice is made
+                choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+                if choice.lower() == "camp":
+                    camp(next_room=encounter_dragon())  # Trigger the camping mechanic
+                    encounter_dragon()  # After camping, continue to the next encounter
+                    break  # Exit the loop after handling camping
+                elif choice.lower() == "continue":
+                    encounter_dragon()
+                    break  # Exit the loop after continuing
+                else:
+                    print("Invalid choice. Please type 'camp' or 'continue'.")
+
+        # Create the combat GUI and pass the callback functions
+        combat_window = CombatGUI(
+            root,
+            player,
+            Wooden_Golem,
+            hallway2,  # Flee
+            handle_win,  # On win
+            end_game,  # On loss
+        )
+        root.mainloop()
+
+    elif choice.lower() == "sneak":
+        if player.attack > 15 or player.defense > 12:
+            print("\nUsing your skills, you successfully sneak past the golem and quietly open the door.")
+            encounter_dragon()  # Continue to the next encounter
+        else:
+            print("\nYou stumble while sneaking, and the golem catches you.")
+            Wooden_Golem = Monster(name="Wooden Golem", health=200, attack=30, defense=50, xp_reward=50)
+            root = tk.Tk()
+
+            def handle_win():
+                # This function is called when the player wins the combat
+                print("You defeated the golem and open the door.")
+                print("Before you proceed, do you want to set up camp and rest, or continue immediately?")
+                
+                while True:  # Loop until a valid choice is made
+                    choice = input("Type 'camp' to rest or 'continue' to keep going: ")
+
+                    if choice.lower() == "camp":
+                        camp(next_room=encounter_dragon())  # Trigger the camping mechanic
+                        encounter_dragon()  # After camping, continue to the next encounter
+                        break  # Exit the loop after handling camping
+                    elif choice.lower() == "continue":
+                        encounter_dragon()
+                        break  # Exit the loop after continuing
+                    else:
+                        print("Invalid choice. Please type 'camp' or 'continue'.")
+
+            # Create the combat GUI for the golem encounter
+            combat_window = CombatGUI(
+                root,
+                player,
+                Wooden_Golem,
+                hallway2,  # Flee
+                handle_win,  # On win
+                end_game,  # On loss
+            )
+            root.mainloop()
+    else:
+        print("Invalid choice. Please choose 'fight' or 'sneak'.")
+    
+
+def combat(player, monster, previous_room):
+    print(f"\nA wild {monster.name} appears!")
+    print(f"{monster.name} Stats - HP: {monster.health}, Attack: {monster.attack}, Defense: {monster.defense}\n")
+
+    while player.is_alive() and monster.is_alive():
+        print(f"{player.name} - HP: {player.health}/{player.max_health}")
+        print(f"{monster.name} - HP: {monster.health}/{monster.max_health}")
+        print("\nChoose an action: [attack, defend, cast spell use item, flee]")
+        action = input("> ")
+
+        if action.lower() == "attack":
+            player.attack_target(monster)
+            if monster.is_alive():
+                monster.attack_target(player)
+        elif action.lower() == "defend":
+            print(f"{player.name} defends and reduces incoming damage!")
+            original_defense = player.defense
+            player.defense += 5
+            monster.attack_target(player)
+            player.defense = original_defense
+        elif action.lower() == "cast spell":
+            if "firebolt" in player.spells:  # Checking if the player knows Firebolt
+                firebolt(player, monster)
+            if monster.is_alive():
+                monster.attack_target(player)
+            else:
+                    print("You do not know any spells.")
+        elif action.lower() == "use item":
+            if "potion" in player.inventory:
+                print("You use a potion and restore your health to full.")
+                player.health = player.max_health
+                player.inventory.remove("potion")
+                print(f"Your health is now fully restored: {player.health}/{player.max_health}.")
+            else:
+                print("You have no items to use.")
+        elif action.lower() == "flee":
+            if random.random() < 0.4:
+                print("You successfully fled from combat!")
+                print("You successfully fled from combat!")
+                previous_room()  # Go back to the previous room
+       
+                return
+            else:
+                print("Failed to flee!")
+                monster.attack_target(player)
+        else:
+            print("Invalid action. Choose [attack, defend, use item, cast spell flee].")
+
+    if player.is_alive():
+        print(f"\nYou have defeated the {monster.name}!")
+        player.gain_experience(monster.xp_reward)
+    else:
+        print(f"\nYou have been defeated by the {monster.name}.")
+        
+        
+
+def end_game():
+    print("\nThank you for playing The Adventure Game!")
+    sys.exit()
+
+if __name__ == "__main__":
+    intro()
+    
+if __name__ == "__main__":
+    root = tk.Tk()
+    player = Player("Hero")
+    monster = Monster("Goblin")
+
+    combat_gui = CombatGUI(root, player, monster)
+    root.mainloop()  # Start the GUI event loop
