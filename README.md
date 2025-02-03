@@ -99,7 +99,9 @@ University of Central Arkansas, May 2021
 - Minor: Military Science
   
 **[Cybersecurity-Artificial Intelligence Certificatte](https://www.pnw.edu/cybersecurity/cwct/cybersecurity-artificial-intelligence-cs_ai-certificate-program/)**
+
 <b>Purdue Northwest University/Ivytech, Present</b>
+
   Focus of study: AI and Cybersecurity
 
 ---
