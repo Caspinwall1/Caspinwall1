@@ -1,42 +1,41 @@
 <h1>Hi, I'm Christian! <br/><a href="https://github.com/Caspinwall1">Military Officer</a> and <a href="https://www.linkedin.com/in/christian-aspinwall-929292233/">IT Professional</a>, </h1>
+🚀 Cybersecurity | Networking | Automation | Systems Engineering 
 
-<h2>👨‍💻 Cybersecurity and Networking Projects:</h2>
+---
 
-- <b> Home Lab Projects</b>
-  - [Pi-Hole Network-Wide Ad Blocker](https://github.com/Caspinwall1/PiHole)
-      - **Tech Stack:** Raspberry Pi, Docker, Bash
-      - Blocked **10M+ ads/month** across a 50+ device network using DNS-level filtering.
-      - Enhanced privacy and reduced bandwidth usage by **40%**.
-  - [Secure Disk Sanitization Tool](https://github.com/Caspinwall1/Caspinwall1-DW)
-      - Wiped **500+ drives** meeting standards for data compliance.
-      - Automated workflows with PowerShell to reduce manual effort by **70%**.
- 
-- <b> Python Projects</b>
-  - Restaurant Bill Calculator (insert link)
-  - [Bagels a deductive logic game](https://github.com/Caspinwall1/Caspinwall1/commit/9cb21027a2d827f484e17a55afc9b4ab70c362d1))
-  - Circles
-  - Exception Calculator
-  - Rectangles
-  - Distance Traveled
-  - Triangle
-  - [Adventure Game](https://github.com/Caspinwall1/Caspinwall1/blob/main/Adventure_Game)
-  - [Adventure RPG Game (GUI)](https://github.com/Caspinwall1/Caspinwall1/blob/main/ADV%20RPG%20GUI)
-      - Built a combat-driven RPG with **1K+ lines of Python** using Tkinter.
-      - Features: Inventory system, enemy AI, and dynamic stat tracking.
+## 🔧 **Technical Projects & Contributions**  
 
--<b> Powershell Automation Scripts</b>
- - [Enterprise Server Maintenance Toolkit](https://github.com/Caspinwall1/Caspinwall1/blob/main/weekly%20server%20restart)
-     - Automated patching/reboots for **100+ servers**, ensuring **99.9% uptime**.
-     - Integrated with LogicMonitor for real-time health checks.
- - [Get OS Info](https://github.com/Caspinwall1/Caspinwall1/blob/main/Get%20Os%20info)
- - [VSS Writer Monitor](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)
-     - Prevented backup failures by restarting stalled Volume Shadow Copy services.
-     - Deployed across 50+ VMWare VMs, reducing backup errors by **90%**.
- - [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts) 
+### **🔹 Home Lab & Cybersecurity Projects**  
+- **[Pi-Hole Network-Wide Ad Blocker](https://github.com/Caspinwall1/PiHole)**  
+  - **Tech Stack:** Raspberry Pi, Docker, Bash  
+  - Blocked **10M+ ads/month** across a **10+ device** network using DNS-level filtering.  
+  - Enhanced privacy & reduced bandwidth usage by **40%**.  
 
-<h2> 🤳 Connect with me:</h2>
+- **[Secure Disk Sanitization Tool](https://github.com/Caspinwall1/Caspinwall1-DW)**  
+  - Wiped **500+ drives** to meet strict data compliance standards.  
+  - Automated workflows with PowerShell, cutting manual effort by **70%**.  
 
-### Systems Engineer at General Informatics (July 2024-)
+### **🐍 Python Projects**  
+- **[Adventure RPG Game (GUI)](https://github.com/Caspinwall1/Caspinwall1/blob/main/ADV%20RPG%20GUI)**  
+  - Developed a **1K+ line** combat-driven RPG with Tkinter.  
+  - Features: Inventory system, enemy AI, and dynamic stat tracking.  
+- **[Bagels (Deductive Logic Game)](https://github.com/Caspinwall1/Caspinwall1/commit/9cb21027a2d827f484e17a55afc9b4ab70c362d1)**  
+- **[Adventure Game (Text-Based)](https://github.com/Caspinwall1/Caspinwall1/blob/main/Adventure_Game)**  
+- **Other Projects:** Restaurant Bill Calculator, Circles, Exception Calculator, Rectangles, Distance Traveled, Triangle  
+
+### **📜 PowerShell Automation Scripts**  
+- **[Enterprise Server Maintenance Toolkit](https://github.com/Caspinwall1/Caspinwall1/blob/main/weekly%20server%20restart)**  
+  - Automated patching/reboots for **100+ servers**, ensuring **99.9% uptime**.  
+  - Integrated with **LogicMonitor** for real-time health checks.  
+- **[VSS Writer Monitor](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)**  
+  - Reduced backup errors by **90%** by automatically restarting stalled VSS services.  
+  - Deployed across **50+ VMware VMs**.
+  - [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts) 
+
+
+## 💼 **Professional Experience**  
+
+### **🔹 Systems Engineer | General Informatics** *(July 2024 – Present)* 
  - Work across multiple IT environments
  - Reset user passwords, assign permissions, create new users, use Active Directory to configure GPOs and user permissions.
  - Use Windows Server and Microsoft Desktop OS to troubleshoot server issues that occur.
@@ -59,11 +58,11 @@
  - VMWare and Hyper-V
  - Powershell scripting to troubleshoot and gain system information 
 
-### Simulation Technician at Actalent (March 2024 – June 2024)
+### **🔹 Simulation Technician | Actalent** *(March 2024 – June 2024)* 
 - Utilized Linux for daily data access and troubleshooting simulations and training aids.
 - Assisted a team of 13 in configuring and troubleshooting a VOIP server.
 
-### Security Operations Manager | Infantry Officer at US Army (Sep 2022 – February 2024)
+### **🔹 Security Operations Manager | US Army** *(Sep 2022 – Feb 2024)*  
 - Monitored network security and ensured adherence to information security policies.
 - Troubleshot Cisco routers and switches to maintain uninterrupted internet access for 5 endpoints.
 - Developed a tracking system using Excel and Microsoft Teams to improve resource allocation, saving 267 hours of labor.
@@ -75,28 +74,37 @@
 
 ---
 
-## Skills
-
-- **Technical Skills:** Cisco Switching, Multi-Path, GLBP, HSRP, QoS, Routing protocols (BGP, OSPF, EIGRP), WLAN, Prefix Lists, NAT, PAT, MPLS, VoIP, Video, IDS/IPS, NAC, Firewalls, network troubleshooting tools and techniques
-- **Operating Systems:** Windows, Linux (command line experience)
-- **Tools:** Atlassian Jira, Slack, Microsoft 365 Suite (Word, Excel, PowerPoint), Microsoft Teams, Outlook, Dropbox, Zoom
-- **Soft Skills:** Excellent communication, problem-solving, analytical and organizational skills, ability to work independently and as part of a team, strong sense of urgency
-
----
-
-## Certifications
-
-- Cisco CCNA (2024)
-- Comptia Cloud+(2024)
-- CompTIA Security+ (2023)
-- CompTIA Network+ (2023)
-- Google IT Support Professional (2023)
-- LPI Linux Essentials (2023)
-- Google Cybersecurity Professional Course (2023)
+## 🔧 **Technical Skills**  
+💻 **Networking & Security:** Cisco Switching, Routing (BGP, OSPF, EIGRP), QoS, Firewalls, VLANs, IDS/IPS, MPLS, VPNs, VoIP  
+🔹 **Systems Administration:** Windows Server, Active Directory, Hyper-V, VMware, PowerShell  
+📡 **Cloud & Virtualization:** Microsoft 365, SharePoint, Azure Fundamentals  
+🐧 **Linux:** CLI, Automation, Troubleshooting  
+🔍 **Monitoring & Automation:** LogicMonitor, SentinelOne, ConnectWise, ScreenConnect  
 
 ---
 
-## Education
+## 🏆 **Certifications** 
+
+### 📡 Networking & Security  
+- 🖧 **Cisco Certified Network Associate (CCNA)** *(2024)*  
+- 🔍 **Cisco CyberOps Associate** *(2024)*  
+- 🔐 **CompTIA Security+** *(2023)*  
+- 📡 **CompTIA Network+** *(2023)*  
+
+### ☁️ Cloud & DevOps  
+- ☁️ **AWS Certified Cloud Practitioner (CCP)** *(2024)*  
+- 🌩️ **CompTIA Cloud+** *(2024)*  
+
+### 🖥️ IT & Cybersecurity  
+- 🎯 **Google IT Support Professional** *(2023)*  
+- 🛡️ **Google Cybersecurity Professional Course** *(2023)*  
+- 🖥️ **LPI Linux Essentials** *(2023)*  
+
+### 🐍 Programming & Automation  
+- 🏅 **PCI Certified in Python Programming** *(2024)*  
+---
+
+## 🎓 **Education** 
 
 **Bachelor of Arts in Psychology**  
 University of Central Arkansas, May 2021  
@@ -107,27 +115,19 @@ University of Central Arkansas, May 2021
 - Purdue Northwest University/Ivytech, Present
 - Focus of study: Cybersecurity and AI
 
----
-
 
 ---
 
-**Christian Aspinwall**  
-📞 706-580-6785  
-✉️ [c7v7aspinwall@hotmail.com](mailto:c7v7aspinwall@hotmail.com)  
-[LinkedIn](https://www.linkedin.com/in/christian-aspinwall-929292233/)
+## 📬 **Let’s Connect!**  
+📞 **Phone:** 706-580-6785  
+✉️ **Email:** [c7v7aspinwall@hotmail.com](mailto:c7v7aspinwall@hotmail.com)  
+🔗 **[LinkedIn](https://www.linkedin.com/in/christian-aspinwall-929292233/)**  
+💻 **[GitHub](https://github.com/Caspinwall1)**  
 
-<!--
-**Caspinwall1/jCaspinwall1** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+---
 
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🔥 **Why Should You Hire Me?**  
+✅ **Technical Expertise:** Hands-on experience in **networking, cybersecurity, scripting, and automation**.  
+✅ **Problem-Solving Mindset:** Proven ability to diagnose & resolve **complex IT issues** across various environments.  
+✅ **Leadership & Military Discipline:** Experience managing high-stakes projects under pressure.  
+✅ **Continuous Learning:** Actively pursuing new certifications and projects to stay ahead in IT. 
