@@ -103,9 +103,9 @@ University of Central Arkansas, May 2021
 - Major: Psychology  
 - Minor: Military Science
   
-[Cybersecurity-Artificial Intelligence Certificatte](https://www.pnw.edu/cybersecurity/cwct/cybersecurity-artificial-intelligence-cs_ai-certificate-program/)
-- P
-- F
+[Cybersecurity-Artificial Intelligence Certificate](https://www.pnw.edu/cybersecurity/cwct/cybersecurity-artificial-intelligence-cs_ai-certificate-program/)
+- Purdue Northwest University/Ivytech, Present
+- Focus of study: Cybersecurity and AI
 
 ---
 
