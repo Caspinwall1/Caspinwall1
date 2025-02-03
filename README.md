@@ -22,7 +22,7 @@
 -<b> Powershell Automation Scripts</b>
  - [Enterprise Server Maintenance Toolkit](https://github.com/Caspinwall1/Caspinwall1/blob/main/weekly%20server%20restart)
      - Automated patching/reboots for **100+ servers**, ensuring **99.9% uptime**.
-     - Integrated with SolarWinds for real-time health checks.
+     - Integrated with LogicMonitor for real-time health checks.
  - [Get OS Info](https://github.com/Caspinwall1/Caspinwall1/blob/main/Get%20Os%20info)
  - [VSS Writer Monitor](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)
      - Prevented backup failures by restarting stalled Volume Shadow Copy services.
@@ -97,6 +97,9 @@
 University of Central Arkansas, May 2021  
 - Major: Psychology  
 - Minor: Military Science
+**[AI ](https://www.pnw.edu/cybersecurity/cwct/cybersecurity-artificial-intelligence-cs_ai-certificate-program/)**
+  Purdue Northwest University/Ivytech, Present
+  -Focus of study: AI and Cybersecurity
 
 ---
 
