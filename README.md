@@ -15,15 +15,19 @@
   - Distance Traveled
   - Triangle
   - [Adventure Game](https://github.com/Caspinwall1/Caspinwall1/blob/main/Adventure_Game)
-  - [Adventure RPG (GUI based)](https://github.com/Caspinwall1/Caspinwall1/blob/main/ADV%20RPG%20GUI)
+  - [Adventure RPG Game (GUI)](https://github.com/Caspinwall1/Caspinwall1/blob/main/ADV%20RPG%20GUI)
+      - Built a combat-driven RPG with **1K+ lines of Python** using Tkinter.
+      - Features: Inventory system, enemy AI, and dynamic stat tracking.
 
 -<b> Powershell Automation Scripts</b>
  - [Enterprise Server Maintenance Toolkit](https://github.com/Caspinwall1/Caspinwall1/blob/main/weekly%20server%20restart)
- - Automated patching/reboots for **100+ servers**, ensuring **99.9% uptime**.
- - Integrated with SolarWinds for real-time health checks.
+     - Automated patching/reboots for **100+ servers**, ensuring **99.9% uptime**.
+     - Integrated with SolarWinds for real-time health checks.
  - [Get OS Info](https://github.com/Caspinwall1/Caspinwall1/blob/main/Get%20Os%20info)
- - [VSS Writers Check and Restart](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)
- - [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts)
+ - [VSS Writer Monitor](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)
+     - Prevented backup failures by restarting stalled Volume Shadow Copy services.
+     - Deployed across 50+ VMWare VMs, reducing backup errors by **90%**.
+ - [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts) 
 
 <h2> 🤳 Connect with me:</h2>
 
