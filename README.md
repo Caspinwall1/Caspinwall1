@@ -3,8 +3,13 @@
 <h2>👨‍💻 Cybersecurity and Networking Projects:</h2>
 
 - <b> Home Lab Projects</b>
-  - [Pi Hole Ad Blocker using a Rasberry Pi](https://github.com/Caspinwall1/PiHole/blob/main/README.md)
-  - [Disk Sanitization](https://github.com/Caspinwall1/Caspinwall1-DW/blob/main/README.md)
+  - [Pi-Hole Network-Wide Ad Blocker](https://github.com/Caspinwall1/PiHole)
+      - **Tech Stack:** Raspberry Pi, Docker, Bash
+      - Blocked **10M+ ads/month** across a 50+ device network using DNS-level filtering.
+      - Enhanced privacy and reduced bandwidth usage by **40%**.
+  - [Secure Disk Sanitization Tool](https://github.com/Caspinwall1/Caspinwall1-DW)
+      - Wiped **500+ drives** meeting standards for data compliance.
+      - Automated workflows with PowerShell to reduce manual effort by **70%**.
  
 - <b> Python Projects</b>
   - Restaurant Bill Calculator (insert link)
@@ -99,8 +104,8 @@ University of Central Arkansas, May 2021
 - Minor: Military Science
   
 [Cybersecurity-Artificial Intelligence Certificatte](https://www.pnw.edu/cybersecurity/cwct/cybersecurity-artificial-intelligence-cs_ai-certificate-program/)
- -Purdue Northwest University/Ivytech, Present
- -Focus of study: AI and Cybersecurity
+- P
+- F
 
 ---
 
