@@ -119,8 +119,8 @@ University of Central Arkansas, May 2021
 ---
 
 ## 📬 **Let’s Connect!**  
-📞 **Phone:** 706-580-6785  
-✉️ **Email:** [c7v7aspinwall@hotmail.com](mailto:c7v7aspinwall@hotmail.com)  
+📞 **Phone:** ******
+✉️ **Email:** [c7v*as*pin*wal*l@hot*mail.c*om](mailto:c7v7aspinwall@hotmail.com)  
 🔗 **[LinkedIn](https://www.linkedin.com/in/christian-aspinwall-929292233/)**  
 💻 **[GitHub](https://github.com/Caspinwall1)**  
 
