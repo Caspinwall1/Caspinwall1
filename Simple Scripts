@@ -10,3 +10,34 @@ Write-Output "The device was last restarted on: $lastBootUpTime"
    Write-Host '`n(3/4) DISM' -ForegroundColor Green; DISM /Online /Cleanup-Image /Restorehealth;
    Write-Host '`n(4/4) SFC - 2nd scan' -ForegroundColor Green; sfc /scannow;
    Read-Host '`nPress Enter to Continue'" -verb runas
+
+
+# List printers
+Get-CimInstance -ClassName Win32_Printer
+
+# Show print queue counts
+Get-CimInstance -ClassName Win32_PerfFormattedData_Spooler_PrintQueue |
+    Select-Object Name, Jobs, JobErrors, TotalJobsPrinted
+
+# Print queue details
+Get-CimInstance -ClassName Win32_PrintJob
+
+# Restart spooler (not cim but valuable)
+Restart-Service -Name Spooler
+
+# Print a windows test page on a printer
+Get-CimInstance -ClassName Win32_Printer -Filter 'Name="HP LaserJet M604"' |
+    Invoke-CimMethod -MethodName PrintTestPage
+
+# Rename a printer
+Get-CimInstance -ClassName Win32_Printer -Filter 'Name="HP LaserJet M604"' |
+    Invoke-CimMethod -Method RenamePrinter -Arguments @{NewPrinterName = "My new name"}
+
+# Some advanced printer settings
+# Get info about the methods and parameters they take.
+(Get-CimClass -Namespace root/StandardCimv2 -ClassName MSFT_PrinterConfiguration).CimClassMethods['SetByPrinterName'].Parameters
+# Set the parameter. In this case is turning on printer duplexing.
+Invoke-CimMethod -Namespace root/StandardCimv2 -ClassName MSFT_PrinterConfiguration -MethodName SetByPrinterName -Arguments @{
+    PrinterName   = 'HP LaserJet M604'
+    DuplexingMode = [uint32]1
+}
