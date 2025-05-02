@@ -35,7 +35,7 @@
 
 ## 💼 **Professional Experience**  
 
-### **🔹 Systems Engineer | General Informatics** *(July 2024 – Present)* 
+### **🔹 Systems Engineer | General Informatics** *(May 2024 – Present)* 
  - Work across multiple IT environments
  - Reset user passwords, assign permissions, create new users, use Active Directory to configure GPOs and user permissions.
  - Use Windows Server and Microsoft Desktop OS to troubleshoot server issues that occur.
