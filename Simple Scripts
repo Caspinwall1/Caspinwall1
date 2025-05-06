@@ -41,3 +41,35 @@ Invoke-CimMethod -Namespace root/StandardCimv2 -ClassName MSFT_PrinterConfigurat
     PrinterName   = 'HP LaserJet M604'
     DuplexingMode = [uint32]1
 }
+
+
+
+#DNS secondary 8.8.8.8 to solve basic DNS issues.
+# Requires: Windows 8 / Server 2012 or newer (Get‑/Set‑DnsClientServerAddress)
+
+# 1. Get all adapters that have at least one IPv4 DNS server configured
+$adapters = Get-DnsClientServerAddress -AddressFamily IPv4 |
+    Where-Object { $_.ServerAddresses.Count -ge 1 }
+
+foreach ($adapter in $adapters) {
+    $ifaceIndex = $adapter.InterfaceIndex
+    $alias      = $adapter.InterfaceAlias
+    $servers    = $adapter.ServerAddresses
+
+    # Current primary DNS
+    $primary = $servers[0]
+
+    # Check if secondary is already 8.8.8.8
+    if ($servers.Count -ge 2 -and $servers[1] -eq '8.8.8.8') {
+        Write-Host "[$alias] Already has secondary DNS 8.8.8.8 — skipping"
+    }
+    else {
+        Write-Host "[$alias] Setting secondary DNS to 8.8.8.8 (primary remains $primary)"
+        # Re‑apply both addresses: primary stays the same, secondary becomes 8.8.8.8
+        Set-DnsClientServerAddress `
+            -InterfaceIndex $ifaceIndex `
+            -ServerAddresses @($primary,'8.8.8.8')
+    }
+}
+
+Write-Host "Done."
