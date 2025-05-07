@@ -73,3 +73,6 @@ foreach ($adapter in $adapters) {
 }
 
 Write-Host "Done."
+
+#Change local account password
+net user "username" password
