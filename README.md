@@ -32,7 +32,7 @@
   - Deployed across **50+ VMware VMs**.
 - [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts)
 -[Networking Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Networking%20Scripts).
--[Error Log Summary]
+-[Error Log Summary](https://github.com/Caspinwall1/Caspinwall1/blob/main/Event%20log%20Error%20Summary).
 
 
 ## 💼 **Professional Experience**  
