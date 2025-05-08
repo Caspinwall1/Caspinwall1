@@ -30,7 +30,9 @@
 - **[VSS Writer Monitor](https://github.com/Caspinwall1/Caspinwall1/blob/main/VSS%20Check%20and%20restart)**  
   - Reduced backup errors by **90%** by automatically restarting stalled VSS services.  
   - Deployed across **50+ VMware VMs**.
-  - [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts) 
+- [Simple Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Simple%20Scripts)
+-[Networking Scripts]
+-[Error Log Summary]
 
 
 ## 💼 **Professional Experience**  
