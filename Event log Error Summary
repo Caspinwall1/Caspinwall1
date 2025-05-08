@@ -1,0 +1,27 @@
+<#
+.SYNOPSIS
+ Summarizes the most common error events in the System log.
+
+.PARAMETER ComputerName
+ Target computer (default: local machine).
+
+.PARAMETER Hours
+ Look‑back window in hours (default: 24).
+#>
+param(
+    [string] $ComputerName = $env:COMPUTERNAME,
+    [int]    $Hours        = 24
+)
+
+$cutoff = (Get-Date).AddHours(-$Hours)
+
+Get-WinEvent -ComputerName $ComputerName -FilterHashtable @{
+    LogName = 'System'; Level = 2; StartTime = $cutoff
+} |
+Group-Object Id,ProviderName |
+Sort-Object Count -Descending |
+Select-Object @{n='EventID';e={$_.Name.Split(',')[0]}},
+              @{n='Source'; e={$_.Name.Split(',')[1]}},
+              Count |
+Select-Object -First 5 |
+Format-Table -AutoSize
