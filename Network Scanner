@@ -1,0 +1,63 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Jun 14 16:20:25 2025
+
+@author: c7v7a
+"""
+# before installing this script you need to install npcap https://npcap.com/#download
+# you also need to install scappy with pip3 install scapy in your command prompt.
+# change the scanner variable to the subnet of your network, otherwise this will not work.
+import sys
+import time
+
+# Log file setup
+log_file = "scan_results.txt"
+
+# Try importing Scapy
+try:
+    from scapy.all import ARP, Ether, srp
+except ImportError as e:
+    print("❌ Scapy is not installed in this Python environment.")
+    print(f"➡️  Run: {sys.executable} -m pip install scapy")
+    sys.exit(1)
+
+class NetworkScanner:
+    def __init__(self, ip_range):
+        self.ip_range = ip_range
+        self.live_hosts = []
+
+    def scan_network(self):
+        arp = ARP(pdst=self.ip_range)
+        ether = Ether(dst="ff:ff:ff:ff:ff:ff")
+        packet = ether / arp
+
+        print("🔍 Scanning network...")
+
+        for attempt in range(3):
+            try:
+                result = srp(packet, timeout=3, verbose=0)[0]
+                for sent, received in result:
+                    self.live_hosts.append({'ip': received.psrc, 'mac': received.hwsrc})
+                break
+            except Exception as e:
+                print(f"❌ Attempt {attempt + 1} failed: {e}")
+                time.sleep(2)
+        return self.live_hosts
+
+if __name__ == "__main__":
+    scanner = NetworkScanner("192.168.0.0/24")
+    live_hosts = scanner.scan_network()
+
+    with open(log_file, "w") as f:
+        if live_hosts:
+            print("✅ Live hosts found:")
+            f.write("Live hosts found:\n")
+            for host in live_hosts:
+                line = f"IP: {host['ip']}, MAC: {host['mac']}"
+                print(line)
+                f.write(line + "\n")
+        else:
+            print("❌ No live hosts found after retries.")
+            f.write("No live hosts found after retries.\n")
+
+    input("\n⏸ Press Enter to exit...")
