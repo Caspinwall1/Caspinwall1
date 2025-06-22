@@ -21,7 +21,8 @@
   - Features: Inventory system, enemy AI, and dynamic stat tracking.  
 - **[Bagels (Deductive Logic Game)](https://github.com/Caspinwall1/Caspinwall1/commit/9cb21027a2d827f484e17a55afc9b4ab70c362d1)**  
 - **[Adventure Game (Text-Based)](https://github.com/Caspinwall1/Caspinwall1/blob/main/Adventure_Game)**
-- **[Network Scanner](https://github.com/Caspinwall1/Caspinwall1/blob/main/Network%20Scanner)** 
+- **[Network Scanner](https://github.com/Caspinwall1/Caspinwall1/blob/main/Network%20Scanner)**
+-  **[Python Penetration Testing Scripts](https://github.com/Caspinwall1/Caspinwall1/blob/main/Network%20Scanner)** 
 - **Other Projects:** Restaurant Bill Calculator, Circles, Exception Calculator, Rectangles, Distance Traveled, Triangle  
 
 ### **📜 PowerShell Automation Scripts**  
