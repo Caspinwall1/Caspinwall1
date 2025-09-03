@@ -1,0 +1,5 @@
+#Find the model of Monitor
+Get-WmiObject WmiMonitorID -Namespace root\wmi |
+Select-Object @{l="Manufacturer";e={[System.Text.Encoding]::ASCII.GetString($_.ManufacturerName)}},
+@{l="Model";e={[System.Text.Encoding]::ASCII.GetString($_.UserFriendlyName)}},
+@{l="SerialNumber";e={[System.Text.Encoding]::ASCII.GetString($_.SerialNumberID)}}
