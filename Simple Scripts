@@ -87,3 +87,46 @@ Write-Host "Using Repair-WinGetPackageManager cmdlet to bootstrap WinGet..."
 Repair-WinGetPackageManager -AllUsers
 Write-Host "Done."
 
+
+#Unintstall application adust the $app variable with what you want to unintstall
+$app = "Xactimate"
+
+# Search uninstall registry keys (both 64-bit and 32-bit paths)
+$uninstallKey = @(
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+    "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+)
+
+# Get all matching programs
+$programs = Get-ItemProperty $uninstallKey | Where-Object { $_.DisplayName -like "*$app*" }
+
+if ($programs) {
+    foreach ($program in $programs) {
+        Write-Host "Found $($program.DisplayName). Uninstalling..."
+        
+        # Extract uninstall string and clean it up
+        $uninstallCmd = $program.UninstallString
+
+        if ($uninstallCmd) {
+            # If it's wrapped in quotes and contains arguments, split it
+            if ($uninstallCmd -match '^(\"?.+?\.exe\"?)\s*(.*)$') {
+                $exe = $matches[1]
+                $args = $matches[2]
+
+                # Append silent switches if it's MSI
+                if ($exe -like "*msiexec*") {
+                    $args = "$args /qn /norestart"
+                }
+
+                Start-Process -FilePath $exe -ArgumentList $args -Wait
+            } else {
+                Write-Host "Uninstall string format not recognized: $uninstallCmd"
+            }
+        } else {
+            Write-Host "No uninstall string found for $($program.DisplayName)."
+        }
+    }
+} else {
+    Write-Host "Program $app not found in uninstall registry."
+}
+
