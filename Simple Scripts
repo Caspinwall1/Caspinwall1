@@ -12,7 +12,7 @@ Write-Output "The device was last restarted on: $lastBootUpTime"
    Read-Host '`nPress Enter to Continue'" -verb runas
 
 # Reset a domain joined user through a scrennconnect prompt without having to log into the server at all.
-powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "& {Import-Module ActiveDirectory; $user='phstest'; $pass=ConvertTo-SecureString 'Pashtun123456789!!!!' -AsPlainText -Force; Set-ADAccountPassword -Identity $user -NewPassword $pass -Reset; Set-ADUser -Identity $user -ChangePasswordAtLogon $false; Write-Host ('Password for ' + $user + ' has been reset without requiring change at next logon.');}"
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "& {Import-Module ActiveDirectory; $user='changeme'; $pass=ConvertTo-SecureString 'Pashtun123456789!!!!' -AsPlainText -Force; Set-ADAccountPassword -Identity $user -NewPassword $pass -Reset; Set-ADUser -Identity $user -ChangePasswordAtLogon $false; Write-Host ('Password for ' + $user + ' has been reset without requiring change at next logon.');}"
 
 # List printers
 Get-CimInstance -ClassName Win32_Printer
