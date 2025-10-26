@@ -1,0 +1,222 @@
+Bash script (quick, widely compatible) and a Python script (more portable, slightly friendlier output). Both:
+
+Prompt (or accept) a domain and IP.
+
+Run the commands you listed (WHOIS, DIG, Amass passive, sslyze, curl headers / TLS handshake).
+
+Optionally run the active scans (nmap SYN & UDP) — off by default to avoid heavy scans unless you explicitly allow them.
+
+Save every command output into a timestamped folder.
+
+Open the three websites you listed in your default browser (in background).
+
+Important safety & prerequisites
+
+Only run these against targets you are explicitly authorized to test. Don’t scan anything you don’t have permission for.
+
+You must have the required tools installed: whois, dnsutils (for dig), amass, sslyze, curl, nmap.
+Install via apt/pip as needed:
+
+sudo apt update
+sudo apt install whois dnsutils curl nmap -y
+sudo pip3 install sslyze
+# amass via apt or snap or go install (see amass docs)
+
+
+Run the scripts as a normal user (nmap SYN scans may require sudo for raw sockets).
+
+Opening many browser tabs will use your desktop environment’s default browser; ensure you actually want that.
+Bash script — recon.sh (recommended for Kali)
+
+Create a file recon.sh, paste the content below, then chmod +x recon.sh.
+#!/usr/bin/env bash
+# recon.sh - simple reconnaissance automation
+# Usage: ./recon.sh -d example.com -i 12.34.56.78 [-o output_dir] [-a]
+# -a : allow active scans (nmap SYN/UDP). Default: OFF.
+
+set -u
+DOMAIN=""
+IP=""
+OUTBASE=""
+DO_ACTIVE=0
+
+usage() {
+  echo "Usage: $0 -d <domain> -i <ip> [-o output_dir] [-a]"
+  echo "  -a  enable active scans (nmap SYN & UDP). Use responsibly."
+  exit 1
+}
+
+while getopts ":d:i:o:ah" opt; do
+  case ${opt} in
+    d) DOMAIN="${OPTARG}" ;;
+    i) IP="${OPTARG}" ;;
+    o) OUTBASE="${OPTARG}" ;;
+    a) DO_ACTIVE=1 ;;
+    h) usage ;;
+    *) usage ;;
+  esac
+done
+
+if [[ -z "$DOMAIN" || -z "$IP" ]]; then
+  usage
+fi
+
+# Timestamped output directory
+TS=$(date +"%Y%m%d_%H%M%S")
+OUTDIR="${OUTBASE:-recon_${DOMAIN}_${TS}}"
+mkdir -p "$OUTDIR"
+echo "Output -> $OUTDIR"
+
+# helper to log commands
+log() {
+  echo "[$(date +'%F %T')] $*" | tee -a "$OUTDIR/commands_run.txt"
+}
+
+# Check dependencies
+deps=(whois dig amass sslyze curl nmap)
+missing=()
+for d in "${deps[@]}"; do
+  if ! command -v "$d" >/dev/null 2>&1; then
+    missing+=("$d")
+  fi
+done
+if (( ${#missing[@]} > 0 )); then
+  echo "WARNING: The following tools appear missing: ${missing[*]}"
+  echo "Install them before running all checks. Continuing anyway..."
+fi
+
+# 1) WHOIS & DIG
+log "Running whois $DOMAIN"
+whois "$DOMAIN" > "$OUTDIR/whois_${DOMAIN}.txt" 2>&1 || true
+
+log "Running dig any for $DOMAIN"
+dig "$DOMAIN" any +noall +answer > "$OUTDIR/dig_any_${DOMAIN}.txt" 2>&1 || true
+log "dig NS"
+dig ns "$DOMAIN" +noall +answer > "$OUTDIR/dig_ns_${DOMAIN}.txt" 2>&1 || true
+log "dig MX"
+dig mx "$DOMAIN" +noall +answer > "$OUTDIR/dig_mx_${DOMAIN}.txt" 2>&1 || true
+log "dig SOA"
+dig soa "$DOMAIN" +noall +answer > "$OUTDIR/dig_soa_${DOMAIN}.txt" 2>&1 || true
+
+# 2) Passive subdomain enumeration (amass passive)
+if command -v amass >/dev/null 2>&1; then
+  log "Running amass passive enumeration for $DOMAIN"
+  amass enum -passive -d "$DOMAIN" -o "$OUTDIR/amass_passive_${DOMAIN}.txt" 2>&1 || true
+else
+  log "amass not found - skipping passive subdomain enumeration"
+fi
+
+# 3) SSL/TLS check with sslyze
+if command -v sslyze >/dev/null 2>&1; then
+  log "Running sslyze --regular $DOMAIN"
+  sslyze --regular "$DOMAIN" > "$OUTDIR/sslyze_${DOMAIN}.txt" 2>&1 || true
+else
+  log "sslyze not found - skipping TLS tests"
+fi
+
+# 4) curl header + verbose TLS handshake
+log "Running curl -IL and -Iv for $DOMAIN"
+curl -IL "https://${DOMAIN}" > "$OUTDIR/curl_headers_${DOMAIN}.txt" 2>&1 || true
+curl -Iv "https://${DOMAIN}" > "$OUTDIR/curl_tls_${DOMAIN}.txt" 2>&1 || true
+
+# 5) Optional active scans (nmap)
+if (( DO_ACTIVE == 1 )); then
+  log "Running nmap SYN full port scan (may require sudo) against $IP"
+  nmap -sS -T3 -p- "$IP" -oN "$OUTDIR/nmap_syn_${IP}.txt" 2>&1 || true
+  log "Running nmap UDP top-100 ports scan against $IP"
+  nmap -sU -T3 --top-ports 100 "$IP" -oN "$OUTDIR/nmap_udp_${IP}.txt" 2>&1 || true
+  log "Running nmap service/version enumeration"
+  nmap -sV --script=banner "$IP" -oN "$OUTDIR/nmap_sv_${IP}.txt" 2>&1 || true
+else
+  log "Active scans disabled. Re-run with -a to enable nmap scans."
+fi
+
+# 6) open reference websites in default browser (Linux)
+log "Opening reference websites (securitytrails, crt.sh, dnsdumpster) in default browser"
+if command -v xdg-open >/dev/null 2>&1; then
+  xdg-open "https://securitytrails.com/domain/${DOMAIN}" >/dev/null 2>&1 || true
+  xdg-open "https://crt.sh/?q=${DOMAIN}" >/dev/null 2>&1 || true
+  xdg-open "https://dnsdumpster.com/" >/dev/null 2>&1 || true
+else
+  log "xdg-open not found - cannot auto-open browser tabs"
+fi
+
+log "All done. Outputs saved under $OUTDIR"
+echo "Summary files:"
+ls -1 "$OUTDIR"
+
+
+
+
+
+  #!/usr/bin/env python3
+"""
+recon.py <domain> <ip> [--active]
+Saves outputs into recon_<domain>_YYYYMMDD_HHMMSS/
+Opens securitytrails, crt.sh, and dnsdumpster in default browser.
+"""
+import sys, subprocess, os, datetime, shlex, webbrowser
+
+def run(cmd, outfile, cwd=None):
+    with open(outfile, "wb") as f:
+        print(f"[RUN] {cmd}")
+        p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
+        out, _ = p.communicate()
+        f.write(out or b"")
+        return p.returncode
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Usage: recon.py <domain> <ip> [--active]")
+        sys.exit(1)
+    domain = sys.argv[1]
+    ip = sys.argv[2]
+    active = "--active" in sys.argv
+
+    ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    outdir = f"recon_{domain}_{ts}"
+    os.makedirs(outdir, exist_ok=True)
+
+    commands = [
+        (f"whois {domain}", f"{outdir}/whois_{domain}.txt"),
+        (f"dig {domain} any +noall +answer", f"{outdir}/dig_any_{domain}.txt"),
+        (f"dig ns {domain} +noall +answer", f"{outdir}/dig_ns_{domain}.txt"),
+        (f"dig mx {domain} +noall +answer", f"{outdir}/dig_mx_{domain}.txt"),
+        (f"dig soa {domain} +noall +answer", f"{outdir}/dig_soa_{domain}.txt"),
+        (f"amass enum -passive -d {domain} -o {outdir}/amass_passive_{domain}.txt", f"{outdir}/amass_passive_{domain}.txt"),
+        (f"sslyze --regular {domain}", f"{outdir}/sslyze_{domain}.txt"),
+        (f"curl -IL https://{domain}", f"{outdir}/curl_headers_{domain}.txt"),
+        (f"curl -Iv https://{domain}", f"{outdir}/curl_tls_{domain}.txt"),
+    ]
+
+    # write a commands run log
+    with open(f"{outdir}/commands_run.txt", "w") as logf:
+        for cmd, outfile in commands:
+            logf.write(cmd + "\n")
+
+    for cmd, outfile in commands:
+        try:
+            run(cmd, outfile)
+        except Exception as e:
+            print(f"[ERROR] running {cmd}: {e}")
+
+    if active:
+        actives = [
+            (f"nmap -sS -T3 -p- {ip} -oN {outdir}/nmap_syn_{ip}.txt", f"{outdir}/nmap_syn_{ip}.txt"),
+            (f"nmap -sU -T3 --top-ports 100 {ip} -oN {outdir}/nmap_udp_{ip}.txt", f"{outdir}/nmap_udp_{ip}.txt"),
+            (f"nmap -sV --script=banner {ip} -oN {outdir}/nmap_sv_{ip}.txt", f"{outdir}/nmap_sv_{ip}.txt"),
+        ]
+        with open(f"{outdir}/commands_run.txt", "a") as logf:
+            for cmd, _ in actives:
+                logf.write(cmd + "\n")
+        for cmd, outfile in actives:
+            run(cmd, outfile)
+
+    # open reference sites
+    webbrowser.open(f"https://securitytrails.com/domain/{domain}")
+    webbrowser.open(f"https://crt.sh/?q={domain}")
+    webbrowser.open("https://dnsdumpster.com/")
+
+    print("Done. Outputs in:", outdir)
+
+
