@@ -1,3 +1,21 @@
+Teams PowerShell module
+To use Windows PowerShell to run Teams-related commands, you must first install the Teams PowerShell module by running the following command in an elevated PowerShell session:
+
+PowerShell
+Install-Module -Name MicrosoftTeams
+After installing the module, it is loaded into all new PowerShell sessions and the cmdlets are available for configuring policies and settings, such as creating and managing teams.
+
+Before you can work with the Teams PowerShell module, you must establish a connection to a tenant by running the following cmdlet:
+
+PowerShell
+Connect-MicrosoftTeams
+If you want to see a list of all the cmdlets that are included in the Microsoft Teams PowerShell module, you should run the following command:
+
+PowerShell
+Get-Command -Module MicrosoftTeams
+
+
+
 Assign admin roles with PowerShell
 Assigning admin roles with PowerShell is used when you want to automate the process of assignment or you need to perform bulk assignments in Microsoft Entra ID. To assign an admin role, you need to run New-MgDirectoryRoleMemberByRef cmdlet in Microsoft Graph PowerShell module. For example, if you want to assign LynneR@contoso.com the admin role Teams Administrator, run the following cmdlets:
 
