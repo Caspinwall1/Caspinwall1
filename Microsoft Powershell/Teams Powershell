@@ -1,0 +1,19 @@
+Assign admin roles with PowerShell
+Assigning admin roles with PowerShell is used when you want to automate the process of assignment or you need to perform bulk assignments in Microsoft Entra ID. To assign an admin role, you need to run New-MgDirectoryRoleMemberByRef cmdlet in Microsoft Graph PowerShell module. For example, if you want to assign LynneR@contoso.com the admin role Teams Administrator, run the following cmdlets:
+
+PowerShell
+$userName="LynneR@contoso.com"
+$roleName="Teams Administrator"
+$role = Get-MgDirectoryRole | Where-Object {$_.displayName -eq $roleName}
+$userId = (Get-MgUser | Where-Object {$_.UserPrincipalName -eq $userName}).Id
+Run the snippet below to perform the assignment based on the variables above.
+
+PowerShell
+Import-Module Microsoft.Graph.Identity.DirectoryManagement
+
+$params = @{
+	"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$userId"
+}
+New-MgDirectoryRoleMemberByRef -DirectoryRoleId $role.Id -BodyParameter $params
+
+For More https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-roles-to-user-accounts-with-microsoft-365-powershell
