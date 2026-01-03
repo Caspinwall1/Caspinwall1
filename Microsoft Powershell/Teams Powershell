@@ -35,3 +35,33 @@ $params = @{
 New-MgDirectoryRoleMemberByRef -DirectoryRoleId $role.Id -BodyParameter $params
 
 For More https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-roles-to-user-accounts-with-microsoft-365-powershell
+
+#Manage feedback policies
+By default, all users in your organization are automatically assigned the global (Org-wide default) policy, and the feedback feature and survey are enabled in the policy. You can edit the global policy or create and assign a custom policy. After you edit the global policy or assign a custom policy, it can take a few hours for changes to take effect.
+
+You manage feedback policies by using PowerShell:
+
+Use the New-CsTeamsFeedbackPolicy PowerShell cmdlet to create a custom policy.
+
+Use the Grant-CsTeamsFeedbackPolicy PowerShell cmdlet to assign it to one or more users or groups of users, such as a security group or distribution group.
+
+Use the Set-CsTeamsFeedbackPolicy PowerShell cmdlet to set specific flags.
+
+To turn off and turn on the features, set the following parameters:
+
+Give feedback: Set the userInitiatedMode parameter to enabled to allow users who are assigned the policy to give feedback. Setting the parameter to disabled turns off the feature and users who are assigned the policy don't have the option to give feedback.
+
+Surveys: Set the receiveSurveysMode parameter to enabled to allow users who are assigned the policy to receive the survey. To have users receive the survey and allow them to opt out, set the parameter to enabledUserOverride. In Teams, users can then go to Settings > Privacy and choose whether they want to participate in surveys. Setting the parameter to disabled turns off the feature and users who are assigned the policy won't receive the survey.
+
+Email: Use the AllowEmailCollection flag to add an email field.
+
+Log collection: Use the AllowLogCollection flag to add log collection opt-in for users. Log collection is currently enabled only on mobile.
+
+The following example creates a feedback policy called New Hire Feedback Policy and we turn off the ability to give feedback through Give feedback and the survey.
+
+PowerShell
+New-CsTeamsFeedbackPolicy -identity "New Hire Feedback Policy" -userInitiatedMode disabled -receiveSurveysMode disabled
+Then, assign a custom policy named New Hire Feedback Policy to a user named user1.
+
+PowerShell
+Grant-CsTeamsFeedbackPolicy -Identity user1@contoso.com -PolicyName "New Hire Feedback Policy"
