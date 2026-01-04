@@ -76,3 +76,10 @@ By default, people can download a blocked file. Global admins or SharePoint admi
 
 Powershell
 Set-SPOTenant -DisallowInfectedFileDownload $true
+
+Use Exchange Online PowerShell
+You can also configure safe links policies by using the *-SafeLinksPolicy:
+
+New-SafeLinksPolicy
+
+Set-SafeLinksPolicy
