@@ -83,3 +83,21 @@ You can also configure safe links policies by using the *-SafeLinksPolicy:
 New-SafeLinksPolicy
 
 Set-SafeLinksPolicy
+
+Use Microsoft PowerShell
+You can manage end-to-end encryption policies using Microsoft PowerShell cmdlets:
+
+Get-CsTeamsEnhancedEncryptionPolicy returns information about the Teams enhanced encryption policies in your organization.
+
+Grant-CsTeamsEnhancedEncryptionPolicy assigns and unassigns existing enhanced encryption policies to a user. Use $NULL to unassign all policies from a user.
+
+New-CsTeamsEnhancedEncryptionPolicy creates a new Teams enhanced encryption policy.
+
+Remove-CsTeamsEnhancedEncryptionPolicy deletes an enhanced encryption policy from your organization. You can't delete the global, default policy.
+
+Set-CsTeamsEnhancedEncryptionPolicy updates values in an existing Teams enhanced encryption policy.
+
+To enable end-to-end encryption for the entire tenant by setting the default global policy, run the Set-CsTeamsEnhancedEncryptionPolicy cmdlet:
+
+PowerShell
+Set-CsTeamsEnhancedEncryptionPolicy -Identity Global -CallingEndtoEndEncryptionEnabledType DisabledUserOverride
