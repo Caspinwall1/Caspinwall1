@@ -65,3 +65,14 @@ Then, assign a custom policy named New Hire Feedback Policy to a user named user
 
 PowerShell
 Grant-CsTeamsFeedbackPolicy -Identity user1@contoso.com -PolicyName "New Hire Feedback Policy"
+
+
+Use PowerShell
+Admins can also turn on Safe Attachments by connecting to Exchange Online PowerShell (Connect-ExchangeOnline) and using the following command:
+
+Powershell
+Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB $true
+By default, people can download a blocked file. Global admins or SharePoint admins can prevent people from downloading malicious files by connecting to SharePoint Online PowerShell (Connect-SPOService) and running the following command:
+
+Powershell
+Set-SPOTenant -DisallowInfectedFileDownload $true
