@@ -1,0 +1,7 @@
+Import-Module ADSync
+
+Start-ADSyncSyncCycle |PolicyType Delta
+#Syncs only changes (new users, attribute updates, etc.)
+
+Start-ADSyncSyncCycle -PolicyType Initial
+#Full Sync, rarely used (Re-evaluates all objects)
