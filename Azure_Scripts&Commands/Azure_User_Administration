@@ -1,0 +1,5 @@
+New-AzADUser '
+-DisplayName PSshellUser5 '
+-UserPrincipalName PSshelluser5@sandboxlabs.net '
+-MailNickname PSshellUser5 '
+-Password (ConvertTo-SecureString "Pa55w.rd99" -AsPlainText -Force)
