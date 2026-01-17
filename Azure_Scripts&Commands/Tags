@@ -1,0 +1,31 @@
+### Authenticating to Azure from PowerShell
+Paste the following code and then enter your username and password in the prompt:
+# Enter your Azure Tenant ID
+$TenantId = ""
+# login to Azure
+Connect-AzAccount -TenantId $TenantId
+Applying a Tag to a Resource Group
+The following script creates a new tag named Purpose with a value of Demo in the AZ104-Chapter3
+resource group. Simply paste this code into the PowerShell window you authenticated yourself in:
+$tags = @{"Purpose"="Demo"}
+$resourceGroup = Get-AzResourceGroup -Name AZ104-Chapter3
+New-AzTag -ResourceId $resourceGroup.ResourceId -tag $tags
+Applying a Tag to a Resource
+Applying a tag to a resource is very similar; in this instance, you will apply the preceding tag to a
+storage account resource. Tags will be applied to a resource named AZ104Storage. The code is
+illustrated in the following snippet:
+$tags = @{"Purpose"="Demo"}
+$resource = Get-AzResource -Name AZ104Storage -ResourceGroup AZ104-
+Chapter3
+New-AzTag -ResourceId $resource.id -Tag $tags
+Updating Tags
+Update-AzTag is another very useful command. It allows you to update tags to the $tags variable
+that is parsed or to merge tags from the $tags variable with existing tags. Merging combines two
+operations—namely, adding absent tags to the resource or resource group and updating the value
+key for existing tags.
+In the following example, you will add a new tag named Tags with a value of Merge. The result will
+be two tags on the AZ104-Chapter3 resource group:
+$tags = @{"Tags"="Merge"}
+$resourceGroup = Get-AzResourceGroup -Name AZ104-Chapter3
+Update-AzTag -ResourceId $resourceGroup.ResourceId -Tag $tags
+-Operation Merge
