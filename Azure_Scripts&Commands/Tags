@@ -29,3 +29,13 @@ $tags = @{"Tags"="Merge"}
 $resourceGroup = Get-AzResourceGroup -Name AZ104-Chapter3
 Update-AzTag -ResourceId $resourceGroup.ResourceId -Tag $tags
 -Operation Merge
+
+The following example will replace the tags and leave the AZ104-Chapter3 resource group with
+only the tag for Purpose:
+$tags = @{"Tags"="Merge"}
+$resourceGroup = Get-AzResourceGroup -Name AZ104-Chapter3
+Update-AzTag -ResourceId $resourceGroup.ResourceId -Tag $tags
+-Operation Replace
+To run multiple tags in the commands, simply add a semicolon (;) between tag pairs, as per the
+following example:
+$tags = @{"Tag1"="Value1"; "Tag2"="Value2"}
