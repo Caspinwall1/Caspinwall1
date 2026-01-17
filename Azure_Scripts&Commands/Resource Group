@@ -1,0 +1,11 @@
+This section introduces PowerShell scripts that can be used for the automation of resource group
+management, as well as for quicker administration times. Please ensure that the Az module is installed,
+as per the Technical Requirements section at the beginning of the chapter. Then, proceed as follows:
+1. Create a new empty resource group. Define a location and name for the new resource group
+to be deployed, as follows:
+New-AzResourceGroup -Name RG01 -Location "West Europe"
+2. Create another new empty resource group with tags. Define a location, a name, and tags for
+the resource group, as follows:
+$tags = @{"Tag1"="Value1"; "Tag2"="Value2"}
+New-AzResourceGroup -Name RG02 -Location "West Europe" -Tag
+$tags
