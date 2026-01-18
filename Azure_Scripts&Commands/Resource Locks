@@ -15,3 +15,214 @@ Viewing Resource Locks in Effect
 To get information about a lock, use the Get-AzResourceLock cmdlet. To get all locks in your
 subscription, use the following command:
 Get-AzResourceLock
+
+
+
+
+Azure PowerShell
+Use Azure PowerShell to lock deployed resources with the New-AzResourceLock command.
+
+To lock a resource, provide the resource's name, resource type, and resource group name.
+
+Azure PowerShell
+New-AzResourceLock -LockLevel CanNotDelete -LockName LockSite -ResourceName examplesite -ResourceType Microsoft.Web/sites -ResourceGroupName exampleresourcegroup
+To lock a resource group, provide the resource group name.
+
+Azure PowerShell
+New-AzResourceLock -LockName LockGroup -LockLevel CanNotDelete -ResourceGroupName exampleresourcegroup
+To get information about a lock, use Get-AzResourceLock. To get all the locks in your subscription, use:
+
+Azure PowerShell
+Get-AzResourceLock
+To get all locks for a resource, use:
+
+Azure PowerShell
+Get-AzResourceLock -ResourceName examplesite -ResourceType Microsoft.Web/sites -ResourceGroupName exampleresourcegroup
+To get all locks for a resource group, use:
+
+Azure PowerShell
+Get-AzResourceLock -ResourceGroupName exampleresourcegroup
+To delete a lock for a resource, use:
+
+Azure PowerShell
+$lockId = (Get-AzResourceLock -ResourceGroupName exampleresourcegroup -ResourceName examplesite -ResourceType Microsoft.Web/sites).LockId
+Remove-AzResourceLock -LockId $lockId
+To delete a lock for a resource group, use:
+
+Azure PowerShell
+$lockId = (Get-AzResourceLock -ResourceGroupName exampleresourcegroup).LockId
+Remove-AzResourceLock -LockId $lockId
+Azure CLI
+To lock deployed resources with the Azure CLI, use the az lock create command.
+
+To lock a resource, provide the resource name, resource type, and resource group name.
+
+Azure CLI
+az lock create --name LockSite --lock-type CanNotDelete --resource-group exampleresourcegroup --resource-name examplesite --resource-type Microsoft.Web/sites
+To lock a resource group, provide the resource group name.
+
+Azure CLI
+az lock create --name LockGroup --lock-type CanNotDelete --resource-group exampleresourcegroup
+To get information about a lock, use az lock list. To get all the locks in your subscription, use:
+
+Azure CLI
+az lock list
+To get all locks for a resource, use:
+
+Azure CLI
+az lock list --resource-group exampleresourcegroup --resource-name examplesite --namespace Microsoft.Web --resource-type sites --parent ""
+To get all locks for a resource group, use:
+
+Azure CLI
+az lock list --resource-group exampleresourcegroup
+To delete a lock for a resource, use:
+
+Azure CLI
+lockid=$(az lock show --name LockSite --resource-group exampleresourcegroup --resource-type Microsoft.Web/sites --resource-name examplesite --output tsv --query id)
+az lock delete --ids $lockid
+To delete a lock for a resource group, use:
+
+Azure CLI
+lockid=$(az lock show --name LockSite --resource-group exampleresourcegroup  --output tsv --query id)
+az lock delete --ids $lockid
+Python
+To lock deployed resources with Python, use the ManagementLockClient.management_locks.create_or_update_at_resource_group_level command.
+
+To lock a resource, provide the resource name, resource type, and resource group name.
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_result = lock_client.management_locks.create_or_update_at_resource_level(
+    "exampleGroup",
+    "Microsoft.Web",
+    "",
+    "sites",
+    "examplesite",
+    "lockSite",
+    {
+        "level": "CanNotDelete"
+    }
+)
+To lock a resource group, provide the name of the resource group.
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_result = lock_client.management_locks.create_or_update_at_resource_group_level(
+    "exampleGroup",
+    "lockGroup",
+    {
+        "level": "CanNotDelete"
+    }
+)
+To get information about all locks in your subscription, use ManagementLockClient.management_locks.get.
+
+To get all the locks in your subscription, use:
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_result = lock_client.management_locks.list_at_subscription_level()
+
+for lock in lock_result:
+    print(f"Lock name: {lock.name}")
+    print(f"Lock level: {lock.level}")
+    print(f"Lock notes: {lock.notes}")
+To get a lock for a resource, use:
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_result = lock_client.management_locks.get_at_resource_level(
+    "exampleGroup",
+    "Microsoft.Web",
+    "",
+    "sites",
+    "examplesite",
+    "lockSite"
+)
+
+print(f"Lock ID: {lock_result.id}")
+print(f"Lock Name: {lock_result.name}")
+print(f"Lock Level: {lock_result.level}")
+To get a lock for a resource group, use the following code:
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_result = lock_client.management_locks.get_at_resource_group_level(
+    "exampleGroup",
+    "lockGroup"
+)
+
+print(f"Lock ID: {lock_result.id}")
+print(f"Lock Level: {lock_result.level}")
+To delete a lock for a resource, use:
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_client.management_locks.delete_at_resource_level(
+    "exampleGroup",
+    "Microsoft.Web",
+    "",
+    "sites",
+    "examplesite",
+    "lockSite"
+)
+To delete a lock for a resource group, use:
+
+Python
+import os
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import ManagementLockClient
+
+credential = AzureCliCredential()
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+lock_client = ManagementLockClient(credential, subscription_id)
+
+lock_client.management_locks.delete_at_resource_group_level("exampleGroup", "lockGroup")
