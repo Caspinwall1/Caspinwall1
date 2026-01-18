@@ -1,0 +1,17 @@
+Applying a Resource Lock to a Resource
+In order to apply a lock to a resource, you will need to provide the name of the resource, its resource
+type, and its resource group name, as in the following script:
+New-AzResourceLock -LockLevel CanNotDelete -LockName DontDeleteProd
+-ResourceName ProductionWebApp -ResourceType Microsoft.Web/sites
+-ResourceGroupName ProdNorthEuropeRG
+Now, let’s try the same for a resource group.
+Applying a Resource Lock to a Resource Group
+To lock a resource group, provide the name of the resource group and the type of lock to be applied
+using the following script:
+New-AzResourceLock -LockName LockDeleteQA -LockLevel CanNotDelete
+-ResourceGroupName QualityAssuranceRG
+This applies the resource lock to the resource group successfully.
+Viewing Resource Locks in Effect
+To get information about a lock, use the Get-AzResourceLock cmdlet. To get all locks in your
+subscription, use the following command:
+Get-AzResourceLock
