@@ -1,0 +1,30 @@
+# Change all Variables Below
+ $SourceFilePath = "C:\Users\c7v7a\OneDrive\Documents\Certifications"
+$StorageAccountName = "fileuploadstore2026"
+$ContainerName = "azcopydestination"
+$SASToken = "?sv=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx%3D" 
+$DestinationUrl = "https://$StorageAccountName.blob.core.windows.net/$ContainerName`?$SASToken"
+./azcopy.exe copy `
+"$SourceFilePath" `
+"$DestinationUrl" `
+--recursive=true^C
+
+The following script will copy the files from the source container, azcopysource, to the
+destination container, azcopydestination. Note the extra switches (flags) used by the
+following script. –overwrite=ifsourcenewer performs the operation of overwriting files
+on the destination if the source files are new. The --recursive flag recursively copies data
+from the source container and subsequent folders in any filesystem you copy from, essentially
+copying all the files and folders it finds:
+# Change all Variables Below
+$StorageAccountName = "az104storageaccountdemo1"
+$SrcContainerName = "azcopysource"
+$DestContainerName = "azcopydestination"
+$SourceSASToken = "sp=rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx%3D"
+$DestSASToken = "sp=rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx%3D"
+# Run AzCopy Command
+./azcopy.exe copy "https://$StorageAccountName.blob.
+core.windows.net/$($SrcContainerName)?$SourceSASToken"
+"https://$StorageAccountName.blob.core.windows.
+net/$($DestContainerName)?$DestSASToken"
+--overwrite=ifsourcenewer --recursive
+
