@@ -1,0 +1,3 @@
+az vm list-vm-resize-options --resource-group VirtualMachines --name ScaleSetVM1 --output table
+
+az vm resize --resource-group policy --name test-vm --size Standard_B2ats_v2
