@@ -1,0 +1,1 @@
+Set-AzVM -Redeploy -ResourceGroupName "Az104-VirtualMachines-Migration" -Name "ScaleSetVM1"
