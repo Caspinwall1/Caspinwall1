@@ -30,3 +30,12 @@ $virtualNetwork = New-AzVirtualNetwork `
   -ResourceGroupName $ResourceGroup `
   -Location $Location `
   -AddressPrefix $AddressPrefix
+
+$subnet = @{
+Name = 'Demo_Subnet'
+VirtualNetwork = $virtualNetwork
+AddressPrefix = '10.0.0.0/24'
+
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet
+
+Set-AzVirtualNetwork -VirtualNetwork $virtualNetwork
