@@ -1,0 +1,76 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "tags": {
+            "type": "object"
+        },
+        "properties": {
+            "type": "object"
+        },
+        "id": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-07-01",
+            "name": "NetworkWatcher1-NetworkWatcher2",
+            "location": "westeurope",
+            "tags": "[parameters('tags')]",
+            "type": "Microsoft.Network/networkWatchers/connectionMonitors",
+            "properties": {
+                "endpoints": [
+                    {
+                        "name": "fgadbfdb",
+                        "resourceId": "/subscriptions/40fb05e0-17e9-4ba7-9970-94769d0a686b/resourceGroups/AZ104-NetworkWatcher/providers/Microsoft.Compute/virtualMachines/fgadbfdb",
+                        "type": "AzureVM"
+                    },
+                    {
+                        "name": "gvhjvjhvbhjvb(AZ104-NetworkWatcher)",
+                        "resourceId": "/subscriptions/40fb05e0-17e9-4ba7-9970-94769d0a686b/resourceGroups/AZ104-NetworkWatcher/providers/Microsoft.Compute/virtualMachines/gvhjvjhvbhjvb",
+                        "type": "AzureVM"
+                    }
+                ],
+                "testConfigurations": [
+                    {
+                        "name": "NetworkWatcher1-NetworkWatcher2-Cfg",
+                        "testFrequencySec": 30,
+                        "protocol": "TCP",
+                        "successThreshold": {
+                            "checksFailedPercent": 5,
+                            "roundTripTimeMs": 100
+                        },
+                        "tcpConfiguration": {
+                            "port": 3389,
+                            "disableTraceRoute": false
+                        }
+                    }
+                ],
+                "testGroups": [
+                    {
+                        "name": "NetworkWatcher1-NetworkWatcher2",
+                        "disable": false,
+                        "sources": [
+                            "fgadbfdb"
+                        ],
+                        "destinations": [
+                            "gvhjvjhvbhjvb(AZ104-NetworkWatcher)"
+                        ],
+                        "testConfigurations": [
+                            "NetworkWatcher1-NetworkWatcher2-Cfg"
+                        ]
+                    }
+                ],
+                "outputs": []
+            },
+            "id": "/subscriptions/40fb05e0-17e9-4ba7-9970-94769d0a686b/resourceGroups/networkwatcherrg/providers/Microsoft.Network/networkWatchers/NetworkWatcher_westeurope/connectionMonitors/NetworkWatcher1-NetworkWatcher2"
+        }
+    ]
+}
