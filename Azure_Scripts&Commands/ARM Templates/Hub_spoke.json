@@ -1,1 +1,105 @@
-
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope"
+    },
+    "locationSpoke03": {
+      "type": "string",
+      "defaultValue": "northeurope"
+    }
+  },
+  "variables": {
+    "hubVnetName": "hub-lab-net",
+    "spoke01Name": "spoke-01",
+    "spoke02Name": "spoke-02",
+    "spoke03Name": "spoke-03"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('hubVnetName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.12.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "DefaultSubnet",
+            "properties": {
+              "addressPrefix": "10.12.1.0/24"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('spoke01Name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.13.1.0/24"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.13.1.0/26"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('spoke02Name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.13.2.0/24"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.13.2.0/26"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('spoke03Name')]",
+      "location": "[parameters('locationSpoke03')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.13.3.0/24"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.13.3.0/26"
+            }
+          }
+        ]
+      }
+    } ]
+}
