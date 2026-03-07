@@ -1,4 +1,3 @@
-Simplified Hub-and-Spoke Bicep
 param location string = 'westeurope'
 param locationSpoke03 string = 'northeurope'
 
