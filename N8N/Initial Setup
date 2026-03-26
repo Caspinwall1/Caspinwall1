@@ -1,0 +1,6 @@
+I had to run this one liner for it to work properly on a windows command prompt.
+
+docker volume create n8n_data
+
+docker run -it --rm --name n8n -p 5678:5678 -e GENERIC_TIMEZONE="America/New_York" -e TZ="America/New_York" -e N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true -e N8N_RUNNERS_ENABLED=true -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n
+#this creates the n8n volume in docker and is by itself enough to get n8n running locally.
