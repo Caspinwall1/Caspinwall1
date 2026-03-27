@@ -4,3 +4,7 @@ docker volume create n8n_data
 
 docker run -it --rm --name n8n -p 5678:5678 -e GENERIC_TIMEZONE="America/New_York" -e TZ="America/New_York" -e N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true -e N8N_RUNNERS_ENABLED=true -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n
 #this creates the n8n volume in docker and is by itself enough to get n8n running locally.
+
+# If we want to use Postgresql this is what we need to run. Note Either run the above or below. They cant run simotaneously.
+
+docker run -it --rm --name n8n -p 5678:5678 -e GENERIC_TIMEZONE="America/New_York" -e TZ="America/New_York" -e N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true -e N8N_RUNNERS_ENABLED=true -e DB_TYPE=postgresdb -e DB_POSTGRESDB_DATABASE=n8n -e DB_POSTGRESDB_HOST=host.docker.internal -e DB_POSTGRESDB_PORT=5432 -e DB_POSTGRESDB_USER=postgres -e DB_POSTGRESDB_SCHEMA=public -e DB_POSTGRESDB_PASSWORD=yourpassword -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n
