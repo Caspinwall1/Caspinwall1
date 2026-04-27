@@ -66,7 +66,7 @@
 - Utilized Linux for daily data access and troubleshooting simulations and training aids.
 - Assisted a team of 13 in configuring and troubleshooting a VOIP server.
 
-### **🔹 Security Operations Manager | US Army** *(Sep 2022 – Feb 2024)*  
+### **🔹 Junior Systems Admin | US Army** *(Sep 2022 – Feb 2024)*  
 - Monitored network security and ensured adherence to information security policies.
 - Troubleshot Cisco routers and switches to maintain uninterrupted internet access for 5 endpoints.
 - Developed a tracking system using Excel and Microsoft Teams to improve resource allocation, saving 267 hours of labor.
