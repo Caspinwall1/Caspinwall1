@@ -62,8 +62,8 @@
  - VMWare and Hyper-V
  - Powershell scripting to troubleshoot and gain system information 
 
-### **🔹 Simulation Technician | Actalent** *(March 2024 – June 2024)* 
-- Utilized Linux for daily data access and troubleshooting simulations and training aids.
+### **🔹 IT Support Assistant | Teksystems** *(March 2024 – June 2024)* 
+- Utilized Linux for daily data access and troubleshooting workstations
 - Assisted a team of 13 in configuring and troubleshooting a VOIP server.
 
 ### **🔹 Junior Systems Admin | US Army** *(Sep 2022 – Feb 2024)*  
