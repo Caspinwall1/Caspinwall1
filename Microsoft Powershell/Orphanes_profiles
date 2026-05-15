@@ -1,0 +1,26 @@
+$UserProfiles = Get-CimInstance -ClassName Win32_UserProfile |
+                Where-Object { $_.Special -eq $false }
+foreach ($Profile in $UserProfiles) {
+    $UserSID = $Profile.SID
+    $UserAccount = $null
+    try {
+        # Try resolving SID to user account
+        $UserAccount = (New-Object System.Security.Principal.SecurityIdentifier($UserSID)).
+                        Translate([System.Security.Principal.NTAccount]).Value
+    }
+    catch {
+        # SID could not be resolved (orphaned profile)
+    }
+    if (-not $UserAccount) {
+        Write-Host "Deleting orphaned user profile with SID $UserSID" -ForegroundColor Yellow
+        
+        try {
+            Remove-CimInstance -InputObject $Profile -ErrorAction Stop
+            Write-Host "Successfully deleted $UserSID" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "Failed to delete $UserSID : $_" -ForegroundColor Red
+        }
+    }
+}
+Write-Host "User profile cleanup completed." -ForegroundColor Cyan
