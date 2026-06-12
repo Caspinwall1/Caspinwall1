@@ -1,6 +1,14 @@
 # note you have to add a variable for $logDir = "C:\Logs"; New-Item -Path $logDir -ItemType Directory -Force
-$logFile = "C:\Logs\Performance_Metrics.csv"
-$counters = @(
+# $logFile = "C:\Logs\Performance_Metrics.csv": This line sets up a variable that stores the path where your performance data will be saved.
+# $counters = @(): This creates an array of performance counter paths for your CPU, memory, and disk usage.
+# for loop: The loop runs 12 times, collecting data every 5 seconds for 1 minute.
+# Get-Counter: Fetches the current performance data for the specified counters.
+# Get-Date: Retrieves the current date and time, which is used to timestamp each log entry.
+# [PSCustomObject]: Organizes your data into a neat, structured format.
+# Export-Csv: Appends the structured data to your CSV file, allowing the log to grow with each new entry.
+# Write-Host: Prints a friendly message to your PowerShell window, confirming that data has been logged.
+# $logFile = "C:\Logs\Performance_Metrics.csv"
+# $counters = @(
     "\Processor(_Total)\% Processor Time",
     "\Memory\Available MBytes",
     "\PhysicalDisk(_Total)\% Disk Time"
