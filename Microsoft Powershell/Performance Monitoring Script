@@ -1,0 +1,18 @@
+$logFile = "C:\Logs\Performance_Metrics.csv"
+$counters = @(
+    "\Processor(_Total)\% Processor Time",
+    "\Memory\Available MBytes",
+    "\PhysicalDisk(_Total)\% Disk Time"
+)
+for ($i = 1; $i -le 12; $i++) {
+    $data = Get-Counter -Counter $counters -SampleInterval 5
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $output = [PSCustomObject]@{
+        Timestamp        = $timestamp
+        CPU_Usage        = $data.CounterSamples[0].CookedValue
+        Available_Memory = $data.CounterSamples[1].CookedValue
+        Disk_Usage       = $data.CounterSamples[2].CookedValue
+    }
+    $output | Export-Csv -Path $logFile -Append -NoTypeInformation
+    Write-Host "Logged performance data at $timestamp"
+}
