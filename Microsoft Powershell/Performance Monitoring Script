@@ -25,3 +25,6 @@ for ($i = 1; $i -le 12; $i++) {
     $output | Export-Csv -Path $logFile -Append -NoTypeInformation
     Write-Host "Logged performance data at $timestamp"
 }
+
+
+
