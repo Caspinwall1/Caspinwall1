@@ -1,0 +1,33 @@
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$logPath = "C:\Logs\Resource_Optimization_Log.txt"
+$processList = "sqlservr", "w3wp", "powershell"
+foreach ($procName in $processList) {
+    $procs = Get-Process -Name $procName -ErrorAction SilentlyContinue
+    foreach ($proc in $procs) {
+        try {
+            $proc.PriorityClass = 'BelowNormal'
+            Add-Content $logPath "$timestamp - Lowered priority of $($proc.Name) (PID: $($proc.Id))"
+        } catch {
+            Add-Content $logPath "$timestamp - Failed to change priority for $($proc.Name): $_"
+        }
+    }
+}
+$cleanupTarget = "C:\Windows\Temp"
+$deletedCount = 0
+Get-ChildItem -Path $cleanupTarget -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object {
+    try {
+        Remove-Item $_.FullName -Force -Recurse -ErrorAction SilentlyContinue
+        $deletedCount++
+    } catch {}
+}
+Add-Content $logPath "$timestamp - Deleted $deletedCount temporary files from $cleanupTarget"
+
+# use Get-Content C:\Logs\Resource_Optimization_Log.txt to verify what the script did.
+# it changes priority of key processes and deletes temp files further optimising the server
+# if you want to automate the script you can do that here
+
+$taskAction = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-ExecutionPolicy Bypass -File Optimize-Resources.ps1"
+$taskTrigger = New-ScheduledTaskTrigger -Daily -At 3am
+$taskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+$taskSettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+Register-ScheduledTask -TaskName "DailyResourceOptimizer" -Action $taskAction -Trigger $taskTrigger -Principal $taskPrincipal -Settings $taskSettings
