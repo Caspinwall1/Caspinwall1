@@ -1,0 +1,17 @@
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$logFile = "C:\Logs\Container_Performance.csv"
+if (!(Test-Path $logFile)) {
+    "Timestamp,ContainerName,CPU %,Memory Usage,Alert" | Out-File -FilePath $logFile -Encoding utf8
+}
+$containers = docker ps --format "{{.Names}}"
+foreach ($container in $containers) {
+    $stats = docker stats $container --no-stream --format "{{.Name}},{{.CPUPerc}},{{.MemUsage}}"
+    $cpuPercString = ($stats -split ",")[1]
+    $cpuPerc = [double]($cpuPercString.TrimEnd('%'))
+    if ($cpuPerc -gt 80) {
+        $alert = "High CPU"
+    } else {
+        $alert = "OK"
+    }
+    "$timestamp,$stats,$alert" | Out-File -FilePath $logFile -Append -Encoding utf8
+}
