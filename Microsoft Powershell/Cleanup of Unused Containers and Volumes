@@ -1,0 +1,8 @@
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$logFile = "C:\Logs\Container_Cleanup.txt"
+if (!(Test-Path $logFile)) {
+    New-Item -ItemType File -Path $logFile
+}
+docker container prune -f | Out-File -Append -FilePath $logFile
+docker volume prune -f | Out-File -Append -FilePath $logFile
+Add-Content $logFile "$timestamp - Performed cleanup of containers and volumes."
