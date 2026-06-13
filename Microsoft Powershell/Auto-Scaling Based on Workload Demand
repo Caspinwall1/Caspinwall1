@@ -1,0 +1,18 @@
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$logFile = "C:\Logs\Container_AutoScaling_Log.txt"
+if (!(Test-Path $logFile)) {
+    "Timestamp,Container,Action,CPU Load" | Out-File -FilePath $logFile -Encoding utf8
+}
+$containers = docker ps --format "{{.Names}}"
+foreach ($container in $containers) {
+    $cpuOutput = docker stats $container --no-stream --format "{{.CPUPerc}}"
+    $cpuLoad = [double]($cpuOutput.TrimEnd('%'))
+    if ($cpuLoad -gt 80) {
+        $action = "Scale Up"
+    } elseif ($cpuLoad -lt 30) {
+        $action = "Scale Down"
+    } else {
+        $action = "Maintain"
+    }
+    "$timestamp,$container,$action (CPU Load: $cpuLoad%)" | Out-File -FilePath $logFile -Append -Encoding utf8
+}
