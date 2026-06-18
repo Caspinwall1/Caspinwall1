@@ -1,0 +1,72 @@
+$appsToRemove = @(
+    "Unity"
+    "Nextiva"
+    #Another_App
+)
+ 
+# Processes to kill before uninstalling
+$processesToKill = @(
+    "Unity", "UnityHub", "Unity Hub",
+    "Nextiva", "NextivaApp"
+)
+ 
+# Leftover folders to delete if uninstaller misses them
+$leftoverPaths = @(
+    "C:\Program Files\Unity"
+    "C:\Program Files\Unity Hub"
+    "$env:APPDATA\Unity"
+    "$env:LOCALAPPDATA\Unity"
+    "C:\Program Files\Nextiva"
+    "$env:APPDATA\Nextiva"
+    "$env:LOCALAPPDATA\Nextiva"
+)
+ 
+# Kill running processes first
+foreach ($procName in $processesToKill) {
+    Get-Process -Name $procName -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+}
+ 
+# Registry hives to search
+$regPaths = @(
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+)
+ 
+foreach ($appName in $appsToRemove) {
+    $found = $regPaths | ForEach-Object {
+        Get-ItemProperty $_ -ErrorAction SilentlyContinue
+    } | Where-Object { $_.DisplayName -like "*$appName*" }
+ 
+    if (-not $found) { continue }
+ 
+    foreach ($entry in $found) {
+        $cmd = if ($entry.QuietUninstallString) { $entry.QuietUninstallString } else { $entry.UninstallString }
+        if (-not $cmd) { continue }
+ 
+        if ($cmd -match "msiexec") {
+            $guid = [regex]::Match($cmd, '\{[A-F0-9\-]+\}', 'IgnoreCase').Value
+            if ($guid) {
+                Start-Process msiexec.exe -ArgumentList "/x $guid /qn /norestart REBOOT=ReallySuppress" -Wait
+            }
+        } else {
+            if ($cmd -match '^"(.+?)"(.*)$') {
+                Start-Process -FilePath $Matches[1] -ArgumentList $Matches[2].Trim() -Wait
+            } else {
+                Start-Process -FilePath $cmd -Wait
+            }
+        }
+ 
+        # Remove the registry key so the app no longer appears in Add/Remove Programs
+        if ($entry.PSPath) {
+            Remove-Item -Path $entry.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+ 
+# Delete leftover folders
+foreach ($path in $leftoverPaths) {
+    if (Test-Path $path) {
+        Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
