@@ -39,7 +39,7 @@
 
 ## 💼 **Professional Experience**  
 
-### **🔹 Systems Engineer | General Informatics** *(May 2024 – Present)* 
+### **🔹 Systems Engineer | General Informatics** *(June 2024 – Present)* 
  - Work across multiple IT environments
  - Reset user passwords, assign permissions, create new users, use Active Directory to configure GPOs and user permissions.
  - Use Windows Server and Microsoft Desktop OS to troubleshoot server issues that occur.
@@ -62,11 +62,11 @@
  - VMWare and Hyper-V
  - Powershell scripting to troubleshoot and gain system information 
 
-### **🔹 IT Support Assistant | Teksystems** *(March 2024 – June 2024)* 
+### **🔹 Simulation Tech | Teksystems** *(March 2024 – May 2024)* 
 - Utilized Linux for daily data access and troubleshooting workstations
 - Assisted a team of 13 in configuring and troubleshooting a VOIP server.
 
-### **🔹 Junior Systems Admin | US Army** *(Sep 2022 – Feb 2024)*  
+### **🔹 Platoon Leader | US Army** *(Sep 2022 – Feb 2024)*  
 - Monitored network security and ensured adherence to information security policies.
 - Troubleshot Cisco routers and switches to maintain uninterrupted internet access for 5 endpoints.
 - Developed a tracking system using Excel and Microsoft Teams to improve resource allocation, saving 267 hours of labor.
