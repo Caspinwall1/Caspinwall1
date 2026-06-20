@@ -63,13 +63,9 @@
  - Powershell scripting to troubleshoot and gain system information 
 
 ### **🔹 Simulation Tech | Teksystems** *(March 2024 – May 2024)* 
-- Utilized Linux for daily data access and troubleshooting workstations
-- Assisted a team of 13 in configuring and troubleshooting a VOIP server.
+
 
 ### **🔹 Platoon Leader | US Army** *(Sep 2022 – Feb 2024)*  
-- Monitored network security and ensured adherence to information security policies.
-- Troubleshot Cisco routers and switches to maintain uninterrupted internet access for 5 endpoints.
-- Developed a tracking system using Excel and Microsoft Teams to improve resource allocation, saving 267 hours of labor.
 
 ### Manager at Waffle House (Sep 2021 – Sep 2022)
 - Directed high-volume operations, ensuring exceptional service and operational efficiency.
