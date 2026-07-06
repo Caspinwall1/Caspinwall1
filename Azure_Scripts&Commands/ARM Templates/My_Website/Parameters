@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_resume_visitor_api_name": {
+            "value": null
+        },
+        "profiles_Resume_frontdoor_name": {
+            "value": null
+        },
+        "dnszones_caspinwall_com_name": {
+            "value": null
+        },
+        "virtualNetworks_Resumenet_name": {
+            "value": null
+        },
+        "databaseAccounts_prodcodb_name": {
+            "value": null
+        },
+        "networkSecurityGroups_DemoNSG_name": {
+            "value": null
+        },
+        "serverfarms_ASP_rgresumesite_9262_name": {
+            "value": null
+        },
+        "components_resume_visitor_api_name": {
+            "value": null
+        },
+        "privateEndpoints_resumeendpoint_name": {
+            "value": null
+        },
+        "storageAccounts_caspinwallresume_name": {
+            "value": null
+        },
+        "automationAccounts_resumeautomations_name": {
+            "value": null
+        },
+        "databaseAccounts_resumevisitorcosmos_name": {
+            "value": null
+        },
+        "workspaces_resumeloganalytics_name": {
+            "value": null
+        },
+        "actionGroups_Application_Insights_Smart_Detection_name": {
+            "value": null
+        },
+        "workspaces_DefaultWorkspace_40fb05e0_17e9_4ba7_9970_94769d0a686b_CCAN_externalid": {
+            "value": null
+        }
+    }
+}
