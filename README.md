@@ -62,7 +62,7 @@
  - VMWare and Hyper-V
  - Powershell scripting to troubleshoot and gain system information 
 
-### **🔹 Simulation Tech | Teksystems** *(March 2024 – May 2024)* 
+
 
 
 ### **🔹 Platoon Leader | US Army** *(Sep 2022 – Feb 2024)*  
