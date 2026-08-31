@@ -11,6 +11,8 @@ Write-Output "The device was last restarted on: $lastBootUpTime"
    Write-Host '`n(4/4) SFC - 2nd scan' -ForegroundColor Green; sfc /scannow;
    Read-Host '`nPress Enter to Continue'" -verb runas
 
+wmic logicaldisk get size, freespace, caption 
+
 net user Username /delete, 
 and then clear the folder files using the recursive force-delete command rd /s /q "C:\Users\Username
 
