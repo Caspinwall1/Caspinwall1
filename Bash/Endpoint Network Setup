@@ -1,0 +1,35 @@
+#!/bin/bash
+# RHEL Automation Script: Configure network and update system
+
+LOG_FILE="/var/log/rhel_setup_update.log"
+
+echo "=== RHEL Setup & Update Script ===" | tee -a "$LOG_FILE"
+
+# --- Step 1: Configure Network ---
+read -p "Enter IP address (e.g., 192.168.1.100): " IPADDR
+read -p "Enter Netmask in CIDR (e.g., 24): " NETMASK
+read -p "Enter Gateway: " GATEWAY
+read -p "Enter DNS Server: " DNS
+read -p "Enter Hostname: " HOSTNAME
+
+nmcli con mod eth0 ipv4.addresses "$IPADDR/$NETMASK"
+nmcli con mod eth0 ipv4.gateway "$GATEWAY"
+nmcli con mod eth0 ipv4.dns "$DNS"
+nmcli con mod eth0 ipv4.method manual
+nmcli con up eth0
+
+hostnamectl set-hostname "$HOSTNAME"
+
+echo "[INFO] Network configured successfully." | tee -a "$LOG_FILE"
+
+# --- Step 2: System Update ---
+read -p "Do you want to update the system now? (y/n): " CONFIRM
+if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
+echo "[INFO] Updating system..." | tee -a "$LOG_FILE"
+yum update -y | tee -a "$LOG_FILE"
+echo "[INFO] System update completed." | tee -a "$LOG_FILE"
+else
+echo "[INFO] System update skipped." | tee -a "$LOG_FILE"
+fi
+
+echo "=== Script Completed ===" | tee -a "$LOG_FILE"
