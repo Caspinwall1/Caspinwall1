@@ -1,0 +1,21 @@
+cat > ~/legacy_web_setup.sh << 'EOF'
+#!/bin/bash
+# Legacy script to configure a simple web node
+
+set -e
+
+echo "Installing packages..."
+dnf install -y vim-enhanced git httpd
+
+echo "Creating appuser account..."
+useradd appuser
+
+echo "Enabling and starting httpd..."
+systemctl enable httpd
+systemctl start httpd
+
+echo "Marking system as managed by legacy script..."
+echo "Managed by legacy script" >> /etc/motd
+
+echo "Done."
+EOF
