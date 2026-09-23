@@ -1,0 +1,73 @@
+Write-Host "`n========== YMCA-DT1 DISK SPACE AUDIT ==========" -ForegroundColor Cyan
+ 
+Write-Host "`n=== C: DRIVE ===" -ForegroundColor Yellow
+Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'" |
+Select-Object DeviceID,
+    @{N='SizeGB';E={[math]::Round($_.Size/1GB,2)}},
+    @{N='FreeGB';E={[math]::Round($_.FreeSpace/1GB,2)}},
+    @{N='FreePercent';E={[math]::Round(($_.FreeSpace/$_.Size)*100,1)}}
+ 
+Write-Host "`n=== WINDOWS TEMP ===" -ForegroundColor Yellow
+$paths = @(
+    "C:\Windows\Temp",
+    "C:\Windows\SoftwareDistribution\Download",
+    "C:\Windows\Logs",
+    "C:\ProgramData\Microsoft\Windows\WER",
+    "C:\ProgramData\Package Cache",
+    "C:\ProgramData\Dell",
+    "C:\ProgramData\HP",
+    "C:\ProgramData\Lenovo"
+)
+ 
+foreach ($path in $paths) {
+    if (Test-Path $path) {
+        $bytes = (Get-ChildItem $path -Force -Recurse -ErrorAction SilentlyContinue |
+            Measure-Object Length -Sum).Sum
+ 
+        [PSCustomObject]@{
+            Path   = $path
+            SizeGB = [math]::Round($bytes / 1GB, 2)
+        }
+    }
+}
+ 
+Write-Host "`n=== WINDOWS COMPONENT / INSTALLER AREAS ===" -ForegroundColor Yellow
+$systemPaths = @(
+    "C:\Windows\Installer",
+    "C:\Windows\WinSxS",
+    "C:\Windows\SoftwareDistribution",
+    "C:\Windows\System32\DriverStore\FileRepository"
+)
+ 
+foreach ($path in $systemPaths) {
+    if (Test-Path $path) {
+        $bytes = (Get-ChildItem $path -Force -Recurse -ErrorAction SilentlyContinue |
+            Measure-Object Length -Sum).Sum
+ 
+        [PSCustomObject]@{
+            Path   = $path
+            SizeGB = [math]::Round($bytes / 1GB, 2)
+        }
+    }
+}
+ 
+Write-Host "`n=== ROOT-LEVEL LARGE FILES ===" -ForegroundColor Yellow
+Get-ChildItem C:\ -Force -File -ErrorAction SilentlyContinue |
+Where-Object Length -gt 500MB |
+Sort-Object Length -Descending |
+Select-Object FullName,
+    @{N='SizeGB';E={[math]::Round($_.Length/1GB,2)}}
+ 
+Write-Host "`n=== RECYCLE BIN ===" -ForegroundColor Yellow
+$rb = "C:\`$Recycle.Bin"
+if (Test-Path $rb) {
+    $bytes = (Get-ChildItem $rb -Force -Recurse -ErrorAction SilentlyContinue |
+        Measure-Object Length -Sum).Sum
+ 
+    [PSCustomObject]@{
+        Path   = $rb
+        SizeGB = [math]::Round($bytes / 1GB,2)
+    }
+}
+ 
+Write-Host "`n========== AUDIT COMPLETE ==========" -ForegroundColor Cyan
