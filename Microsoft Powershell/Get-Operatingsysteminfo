@@ -1,0 +1,25 @@
+
+function Get-OperatingSystemInfo {
+    [CmdletBinding()]
+    param (
+        [string]$ComputerName = $env:COMPUTERNAME
+    )
+
+    try {
+        Get-CimInstance -ClassName Win32_OperatingSystem `
+            -ComputerName $ComputerName `
+            -ErrorAction Stop |
+        Select-Object `
+            @{Name = "OperatingSystem"; Expression = { $_.Caption } },
+            RegisteredUser,
+            Version,
+            InstallDate,
+            @{Name = "Age"; Expression = {
+                New-TimeSpan -Start $_.InstallDate -End (Get-Date)
+            }},
+            @{Name = "ComputerName"; Expression = { $_.CSName }}
+    }
+    catch {
+        Write-Warning "Failed to get information from $ComputerName. $($_.Exception.Message)"
+    }
+}
